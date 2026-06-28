@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>대시보드</title>
+
+  <th:block layout:fragment="page-css">
+    <style>
+      .kpi-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+      }
+
+      .kpi-sub {
+        font-size: 0.8125rem;
+        color: #9aa0ac;
+        margin-top: 4px;
+      }
+
+      .chart-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .transaction-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f3f5;
+      }
+
+      .transaction-item:last-child {
+        border-bottom: none;
+      }
+
+      .category-badge {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        background-color: rgba(193, 96, 74, 0.1);
+        color: var(--salim-expense);
+      }
+
+      .category-badge.income {
+        background-color: rgba(45, 106, 79, 0.1);
+        color: var(--salim-income);
+      }
+
+      .transaction-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #1e293b;
+      }
+
+      .transaction-meta {
+        font-size: 0.75rem;
+        color: #9aa0ac;
+      }
+
+      .transaction-amount {
+        margin-left: auto;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .donut-legend-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: 0.8125rem;
+        border-bottom: 1px solid #f1f3f5;
+      }
+
+      .donut-legend-item:last-child {
+        border-bottom: none;
+      }
+
+      .donut-legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .donut-legend-name {
+        flex: 1;
+        margin-left: 8px;
+        color: #495057;
+      }
+
+      .donut-legend-pct {
+        color: #9aa0ac;
+        margin-right: 12px;
+      }
+
+      .donut-legend-amount {
+        font-weight: 600;
+        color: #1e293b;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.js"></script>
+  </th:block>
+</head>
+
+<body>
+  <section layout:fragment="content">
+    <div class="page-header d-print-none">
+      <div class="container-xl">
+        <div class="row g-2 align-items-center">
+          <div class="col">
+            <div class="page-pretitle">대시보드</div>
+            <h2 class="page-title">살림 가계부 요약</h2>
+          </div>
+          <div class="col-auto ms-auto d-print-none">
+            <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 0.875rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <span>2026년 6월</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="container-xl">
+
+        <!-- KPI 카드 -->
+        <div class="row row-deck row-cards mb-4">
+
+          <div class="col-sm-6 col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="text-muted" style="font-size: 0.875rem;">이번 달 수입</span>
+                  <span class="badge badge-income">▲ 8.2%</span>
+                </div>
+                <div class="kpi-value text-income">₩4,250,000</div>
+                <div class="kpi-sub">지난달 대비 +₩322,000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="text-muted" style="font-size: 0.875rem;">이번 달 지출</span>
+                  <span class="badge badge-expense">▼ 3.5%</span>
+                </div>
+                <div class="kpi-value text-expense">₩3,120,000</div>
+                <div class="kpi-sub">지난달 대비 -₩110,000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="text-muted" style="font-size: 0.875rem;">현재 잔액</span>
+                  <span class="badge badge-balance">▲ 9.6%</span>
+                </div>
+                <div class="kpi-value text-balance">₩12,840,000</div>
+                <div class="kpi-sub">지난달 대비 +₩1,130,000</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 월별 수입/지출 Bar 차트 -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="chart-title">월별 수입/지출 현황</span>
+              <div class="d-flex gap-3" style="font-size: 0.8125rem;">
+                <span class="d-flex align-items-center gap-1">
+                  <span style="width:10px; height:10px; border-radius:2px; background:var(--salim-income); display:inline-block;"></span>
+                  수입
+                </span>
+                <span class="d-flex align-items-center gap-1">
+                  <span style="width:10px; height:10px; border-radius:2px; background:var(--salim-expense); display:inline-block;"></span>
+                  지출
+                </span>
+              </div>
+            </div>
+            <div id="chart-monthly-bar"></div>
+          </div>
+        </div>
+
+        <!-- 하단 2열 -->
+        <div class="row row-deck row-cards">
+
+          <!-- 카테고리별 지출 도넛 차트 -->
+          <div class="col-lg-5">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="chart-title mb-3">카테고리별 지출</div>
+                <div id="chart-category-donut" class="mb-3"></div>
+                <div>
+                  <div class="donut-legend-item">
+                    <span class="donut-legend-dot" style="background:#C1604A;"></span>
+                    <span class="donut-legend-name">주거</span>
+                    <span class="donut-legend-pct">33.7%</span>
+                    <span class="donut-legend-amount">₩1,050,000</span>
+                  </div>
+                  <div class="donut-legend-item">
+                    <span class="donut-legend-dot" style="background:#D4846F;"></span>
+                    <span class="donut-legend-name">식비</span>
+                    <span class="donut-legend-pct">29.5%</span>
+                    <span class="donut-legend-amount">₩920,000</span>
+                  </div>
+                  <div class="donut-legend-item">
+                    <span class="donut-legend-dot" style="background:#E4A898;"></span>
+                    <span class="donut-legend-name">기타</span>
+                    <span class="donut-legend-pct">15.4%</span>
+                    <span class="donut-legend-amount">₩480,000</span>
+                  </div>
+                  <div class="donut-legend-item">
+                    <span class="donut-legend-dot" style="background:#EFC8BC;"></span>
+                    <span class="donut-legend-name">교통</span>
+                    <span class="donut-legend-pct">12.2%</span>
+                    <span class="donut-legend-amount">₩380,000</span>
+                  </div>
+                  <div class="donut-legend-item">
+                    <span class="donut-legend-dot" style="background:#F5E2DC;"></span>
+                    <span class="donut-legend-name">의료</span>
+                    <span class="donut-legend-pct">9.3%</span>
+                    <span class="donut-legend-amount">₩290,000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 최근 거래 목록 -->
+          <div class="col-lg-7">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <span class="chart-title">최근 거래</span>
+                  <a href="/transactions" class="text-income" style="font-size: 0.8125rem; text-decoration: none;">
+                    전체 보기
+                  </a>
+                </div>
+
+                <div>
+                  <div class="transaction-item">
+                    <div class="category-badge income">급</div>
+                    <div>
+                      <div class="transaction-name">6월 급여</div>
+                      <div class="transaction-meta">수입 · 6월 25일</div>
+                    </div>
+                    <div class="transaction-amount text-income">+₩4,250,000</div>
+                  </div>
+
+                  <div class="transaction-item">
+                    <div class="category-badge">식</div>
+                    <div>
+                      <div class="transaction-name">마트 장보기</div>
+                      <div class="transaction-meta">식비 · 6월 27일</div>
+                    </div>
+                    <div class="transaction-amount text-expense">-₩68,400</div>
+                  </div>
+
+                  <div class="transaction-item">
+                    <div class="category-badge">주</div>
+                    <div>
+                      <div class="transaction-name">아파트 관리비</div>
+                      <div class="transaction-meta">주거 · 6월 23일</div>
+                    </div>
+                    <div class="transaction-amount text-expense">-₩187,000</div>
+                  </div>
+
+                  <div class="transaction-item">
+                    <div class="category-badge">교</div>
+                    <div>
+                      <div class="transaction-name">지하철 정기권</div>
+                      <div class="transaction-meta">교통 · 6월 24일</div>
+                    </div>
+                    <div class="transaction-amount text-expense">-₩55,000</div>
+                  </div>
+
+                  <div class="transaction-item">
+                    <div class="category-badge">식</div>
+                    <div>
+                      <div class="transaction-name">카페</div>
+                      <div class="transaction-meta">식비 · 6월 21일</div>
+                    </div>
+                    <div class="transaction-amount text-expense">-₩12,000</div>
+                  </div>
+
+                  <div class="transaction-item">
+                    <div class="category-badge">의</div>
+                    <div>
+                      <div class="transaction-name">약국</div>
+                      <div class="transaction-meta">의료 · 6월 22일</div>
+                    </div>
+                    <div class="transaction-amount text-expense">-₩23,500</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <th:block layout:fragment="page-js">
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+
+        const COLOR_INCOME  = '#2D6A4F';
+        const COLOR_EXPENSE = '#C1604A';
+
+        // Bar 차트
+        const barOptions = {
+          chart: {
+            type: 'bar',
+            height: 280,
+            toolbar: { show: false },
+            fontFamily: 'Pretendard Variable, sans-serif',
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: '45%',
+              borderRadius: 4,
+            }
+          },
+          dataLabels: { enabled: false },
+          series: [
+            { name: '수입', data: [4200000, 3950000, 3800000, 4500000, 4100000, 4250000] },
+            { name: '지출', data: [2800000, 3100000, 2700000, 2900000, 3200000, 3120000] }
+          ],
+          colors: [COLOR_INCOME, COLOR_EXPENSE],
+          xaxis: {
+            categories: ['1월', '2월', '3월', '4월', '5월', '6월'],
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            labels: { style: { colors: '#9aa0ac', fontSize: '12px' } }
+          },
+          yaxis: {
+            labels: {
+              formatter: (val) => (val / 10000).toFixed(0) + '만',
+              style: { colors: '#9aa0ac', fontSize: '12px' }
+            }
+          },
+          grid: { borderColor: '#f1f3f5', strokeDashArray: 4 },
+          legend: { show: false },
+          tooltip: { y: { formatter: (val) => '₩' + val.toLocaleString('ko-KR') } }
+        };
+
+        new ApexCharts(document.querySelector('#chart-monthly-bar'), barOptions).render();
+
+        // Donut 차트
+        const donutOptions = {
+          chart: {
+            type: 'donut',
+            height: 220,
+            fontFamily: 'Pretendard Variable, sans-serif',
+          },
+          series: [1050000, 920000, 480000, 380000, 290000],
+          labels: ['주거', '식비', '기타', '교통', '의료'],
+          colors: ['#C1604A', '#D4846F', '#E4A898', '#EFC8BC', '#F5E2DC'],
+          dataLabels: { enabled: false },
+          legend: { show: false },
+          plotOptions: {
+            pie: {
+              donut: {
+                size: '70%',
+                labels: {
+                  show: true,
+                  total: {
+                    show: true,
+                    label: '총 지출',
+                    fontSize: '12px',
+                    color: '#9aa0ac',
+                    formatter: () => '₩3,120,000'
+                  }
+                }
+              }
+            }
+          },
+          tooltip: { y: { formatter: (val) => '₩' + val.toLocaleString('ko-KR') } },
+          stroke: { width: 2, colors: ['#fff'] }
+        };
+
+        new ApexCharts(document.querySelector('#chart-category-donut'), donutOptions).render();
+
+      });
+    </script>
+  </th:block>
+
+</body>
+</html>

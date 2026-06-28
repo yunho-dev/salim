@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/auth}">
+<head>
+  <title>로그인</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+  <!-- 태그라인 -->
+  <p class="text-center fw-bold text-dark mb-4">매일의 살림을 한눈에 정리해요</p>
+
+  <div class="card card-md salim-auth-card">
+    <div class="card-body p-4 p-md-5">
+
+      <!-- 살 아이콘 -->
+      <div class="text-center mb-3">
+        <span class="salim-logo-box">살</span>
+      </div>
+
+      <h2 class="text-center mb-1">살림 로그인</h2>
+      <p class="text-center text-secondary mb-4">살림에 오신 걸 환영해요.</p>
+
+      <form id="loginForm" action="/api/members/login" method="post">
+        <!-- 이메일 -->
+        <div class="mb-3">
+          <label class="form-label">아이디(ID)</label>
+          <input type="text" id="memberId" name="memberId" class="form-control"
+                 placeholder="아이디 입력" autocomplete="memberId">
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <label class="form-label mb-0">비밀번호(Password)</label>
+            <a href="#" class="text-decoration-none small">비밀번호 찾기</a>
+          </div>
+          <div class="input-group input-group-flat mt-1">
+            <input type="password" id="password" name="password" class="form-control"
+                   placeholder="비밀번호 입력" autocomplete="current-password">
+            <span class="input-group-text">
+              <a href="#" id="togglePassword"
+                 class="link-secondary text-decoration-none">표시</a>
+            </span>
+          </div>
+        </div>
+
+        <!-- 로그인 상태 유지 -->
+        <div class="mb-4">
+          <label class="form-check mb-0">
+            <input type="checkbox" class="form-check-input">
+            <span class="form-check-label">로그인 상태 유지</span>
+          </label>
+        </div>
+
+        <!-- 오류 메시지 -->
+        <div th:if="${msg}"
+             th:text="${msg}"
+             style="color: red; margin-bottom: 8px; text-align: left;">
+        </div>
+
+        <!-- 로그인 버튼 -->
+        <button type="submit" class="btn btn-primary w-100">로그인</button>
+      </form>
+
+      <!-- 회원가입으로 이동 -->
+      <p class="text-center text-secondary mt-3">
+        아직 계정이 없으신가요? <a href="/signup" class="fw-bold text-decoration-none">회원가입</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>
+
+<th:block layout:fragment="scripts">
+  <script>
+    const toggle = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      const isHidden = password.type === 'password';
+      password.type = isHidden ? 'text' : 'password';
+      toggle.textContent = isHidden ? '숨김' : '표시';
+    });
+  </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+/* ===== 인증 화면 ===== */
+body {
+    height: auto !important;
+    min-height: 100vh;
+    overflow-y: auto !important;
+}
+
+.page.page-center {
+    align-items: flex-start;  /* 수직 중앙 → 상단 정렬로 변경 */
+    /*padding-top: 2rem;*/
+    /*padding-bottom: 2rem;*/
+}
+
+.salim-auth-card {
+    border-top: 3px solid var(--salim-green);
+}
+
+.salim-logo-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background-color: var(--salim-green);
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* 비밀번호 표시 토글 영역 배경을 입력칸이랑 맞춤 */
+.input-group-flat .input-group-text {
+    background-color: transparent;
+}
+
+/* 포커스 시 input-group 전체에 딥그린 테두리 */
+.input-group-flat:focus-within {
+    border-color: var(--salim-green);
+    box-shadow: 0 0 0 1px var(--salim-green);
+    border-radius: var(--tblr-border-radius);
+}

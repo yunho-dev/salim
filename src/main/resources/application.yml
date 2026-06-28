@@ -1,0 +1,34 @@
+spring:
+  profiles:
+    active: local
+
+  application:
+    name: com.salim
+
+  datasource:
+    url:
+    username:
+    password:
+    hikari:
+      schema: salim
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: salim
+
+  thymeleaf:
+    cache: false
+
+  web:
+    resources:
+      chain:
+        cache: false
+
+jwt:
+  secret:
+  expiration: 3600000

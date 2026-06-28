@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Pretendard Variable';
+    src: url('/fonts/pretendard/woff2/PretendardVariable.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --salim-green: #2D6A4F;
+    --salim-terracotta: #C1604A;
+    --salim-ink: #1E2D3D;
+
+    --tblr-primary: #2D6A4F;
+    --tblr-primary-rgb: 45, 106, 79;
+
+    /* 폰트 토큰 */
+    --tblr-font-sans-serif: 'Pretendard Variable', sans-serif;
+}
