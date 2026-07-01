@@ -61,4 +61,8 @@ public class JwtProvider {
                 .getPayload();
     }
 
+    public long getExpiration() {
+        return expiration;
+    }
+
 }
