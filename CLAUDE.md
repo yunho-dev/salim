@@ -1,6 +1,6 @@
-# 살림(Salrim) 프로젝트
+# 살림(Salim) 프로젝트
 
-한국 가계부 웹 애플리케이션. 포트폴리오 목적이며 백엔드 설계 역량과 JPA 데이터 모델링 능력을 보여주는 게 핵심.
+한국 가계부 웹 애플리케이션. 이직용 포트폴리오이며, 백엔드 설계 역량과 JPA 데이터 모델링 능력을 보여주는 게 핵심 목적. 모든 기술적 결정은 면접에서 근거를 설명할 수 있어야 함 — "그냥 되니까"가 아니라 "왜 이렇게 했는지"가 중요.
 
 ---
 
@@ -9,45 +9,43 @@
 | 분류 | 기술 |
 |------|------|
 | Backend | Spring Boot 4.1.x, JPA, PostgreSQL |
-| Frontend | Thymeleaf SSR, Tabler UI (jsDelivr CDN `@latest`), vanilla JS (`fetch` / `async/await`), ApexCharts |
-| Auth | Spring Security + JWT (jjwt 라이브러리) |
+| Frontend | Thymeleaf SSR (Layout Dialect), Tabler UI + Bootstrap, vanilla JS (`fetch` / `async/await`), ApexCharts |
+| Auth | Spring Security + JWT (jjwt 라이브러리), HttpOnly 쿠키 기반 |
 | Font | Pretendard Variable |
 | Build | Gradle, Lombok |
-| IDE | IntelliJ IDEA |
+| IDE | IntelliJ IDEA (Build tool을 Gradle이 아닌 `IntelliJ IDEA`로 설정 — 정적 리소스 핫리로드에 필수) |
 
 ---
 
-## 데이터베이스
+## 데이터베이스 컨벤션
 
 - **Schema:** `salim` (public 아님)
-- **금액 타입:** `DECIMAL(15,0)` — 원화는 소수점 없음
 - **PK 전략:** `GENERATED ALWAYS AS IDENTITY` (bigint) — `AUTO_INCREMENT` 쓰지 말 것
+- **금액 타입:** `DECIMAL(15,0)` — 원화는 소수점 없음
+- **계좌번호:** `VARCHAR(255)`, AES-256 암호화 후 저장 (아래 암호화 섹션 참고)
+- **날짜/시간:** PostgreSQL에는 `datetime` 타입 없음 → `timestamp` 사용
+- **검증:** 애플리케이션 레벨 + DB 레벨(제약조건) 이중 체크 — 동시성/race condition 방어
 
-### 테이블 목록 (6개)
-
+### 테이블 (6개)
 ```
 MEMBER, BANK, ACCOUNT, CATEGORY, PAYMENT_METHOD, TRANSACTION
 ```
-
-- `MEMBER`가 허브 엔티티 (모든 테이블이 member_id FK 보유)
-- `TRANSACTION`: `transaction_date` + nullable `settlement_date` 이중 날짜 설계
-- `ACCOUNT`: 계좌번호 AES-256 암호화 필수
+`MEMBER`가 허브 엔티티 — 모든 테이블이 member_id FK 보유.
 
 ---
 
-## 패키지 구조
+## 패키지 구조 원칙
 
 ```
-com.salim
-├── global
-│   ├── jwt          # JwtProvider, JwtFilter 등
-│   └── config       # SecurityConfig, WebMvcConfig
-├── member
-├── dashboard
-├── account          # account + payment 묶음
-├── transaction
-├── category
-└── report           # 읽기 전용 집계 레이어
+com.salim.[domain]
+```
+도메인별로 패키지를 나누고, 도메인에 속하지 않는 공통 인프라(JWT, Security, 유틸)는 `global` 하위에 배치.
+
+```
+global/
+├── jwt        # JwtProvider, JwtAuthenticationFilter
+├── security   # SecurityConfig
+└── util       # AesUtil, Converter 등
 ```
 
 ---
@@ -55,7 +53,6 @@ com.salim
 ## 엔티티 작성 규칙
 
 ```java
-// 반드시 이 패턴 따를 것
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -66,7 +63,10 @@ public class SomeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 변경 메서드는 명시적으로
+    @Builder
+    public SomeEntity(...) { ... }
+
+    // 상태 변경은 의미 있는 이름의 메서드로 (setter 아님)
     public void changeStatus(Status status) {
         this.status = status;
     }
@@ -84,66 +84,65 @@ public class SomeEntity {
 
 - **record** 사용 (class 아님)
 - 입력 DTO: `XxxRequest`, 출력 DTO: `XxxResponse`
-- Bean Validation 어노테이션은 record 컴포넌트에 직접
+- Bean Validation 어노테이션은 record 컴포넌트에 직접 명시
+- `@Valid`는 컨트롤러의 `@RequestBody`에 붙일 것 (서비스 계층 아님)
 
 ```java
 public record SignupRequest(
-    @NotBlank @Pattern(regexp = "...") String email,
+    @NotBlank @Pattern(regexp = "...") String memberId,
     @NotBlank String password
 ) {}
 ```
 
 ---
 
-## 컨트롤러 구분
+## 컨트롤러 구분 원칙
 
-| 타입 | 어노테이션 | URL 패턴 | 반환 |
-|------|-----------|---------|------|
-| 페이지 컨트롤러 | `@Controller` | `/xxx` | HTML view |
-| API 컨트롤러 | `@RestController` | `/api/xxx` | JSON |
+| 타입 | 어노테이션 | 반환 | 용도 |
+|------|-----------|------|------|
+| 페이지 컨트롤러 | `@Controller` | HTML view | 화면 렌더링 (Thymeleaf) |
+| API 컨트롤러 | `@RestController` 또는 `@Controller`+`@ResponseBody` | JSON | 데이터 처리, 비동기 액션 |
 
-- `AuthController`: 로그인/로그아웃/회원가입 (`/auth/**`)
-- `MemberController`: 프로필 등 인증 후 액션
-- `@Valid`는 컨트롤러 `@RequestBody`에 붙일 것
-- `@Transactional`은 서비스 쓰기 메서드에 명시적으로
+- URL 네이밍: kebab-case 복수형 (예: `/payment-methods`, `/transactions`)
+- `@Transactional`은 서비스 쓰기 메서드에 명시적으로 선언
+
+### 폼 리다이렉트 vs fetch(JSON) 선택 기준
+- **폼 리다이렉트**: 액션 완료 후 어차피 다른 페이지로 전환되는 경우 (로그인, 로그아웃). `RedirectAttributes`로 플래시 메시지 전달.
+- **fetch/JSON**: 페이지 전환 없이 부분 갱신이 필요한 경우 (중복 체크, 필터링, 목록 조회 등)
+- 모든 곳에 ajax를 강제로 쓰지 않는다 — 액션의 성격(페이지 전환 필요 여부)에 따라 판단.
 
 ---
 
 ## 인증 구조
 
-- JWT → `Authorization: Bearer` 헤더 방식
-- **CSRF 비활성화** (쿠키 기반 아니므로 올바름 — 되돌리지 말 것)
-- 비밀번호: BCrypt
-- 테스트 해시는 반드시 `@Test` 메서드로 직접 생성 (외부 해시 문자열 복붙 금지)
-
-```
-완료된 파일:
-- AuthController, AuthService, JwtProvider (com.salim.global.jwt)
-- MemberRepository
-- SecurityConfig (CSRF disabled, /fonts/** 허용)
-- WebMvcConfig (CurrentUriInterceptor 등록)
-```
+- **방식:** JWT를 HttpOnly 쿠키(`token`)에 저장 — SSR 페이지 이동 시에도 자동으로 서버에 전달되어야 하므로 Bearer 헤더 방식이 아닌 쿠키 방식 채택
+- `JwtAuthenticationFilter`(`OncePerRequestFilter` 상속)가 쿠키에서 토큰을 읽어 검증하고, `SecurityContextHolder`에 인증 정보를 채움. `UsernamePasswordAuthenticationFilter` 이전에 실행되도록 `addFilterBefore`로 등록.
+- 인증 실패 시 처리는 `AuthenticationEntryPoint`에서 경로 기준으로 분기: `/api/**`는 401 응답, 그 외 SSR 페이지 요청은 로그인 페이지로 리다이렉트.
+- `authorizeHttpRequests`에서 로그인/회원가입 등 인증 전 접근이 필요한 경로만 명시적으로 `permitAll` 처리하고, 나머지는 `anyRequest().authenticated()`. `/**` 와일드카드로 뭉뚱그려 열지 않는다 — 뒤따르는 `anyRequest()`가 무력화됨.
+- 스프링 시큐리티의 기본 `LogoutFilter`가 `/logout` 경로를 선점하므로, 커스텀 로그아웃 로직을 쓰려면 `.logout(AbstractHttpConfigurer::disable)`로 기본 필터를 꺼야 함.
+- 비밀번호: BCrypt. 테스트용 해시는 반드시 `@Test` 메서드로 직접 생성 (외부 해시 문자열 복붙 금지).
 
 ---
 
-## Thymeleaf 레이아웃
+## Thymeleaf 레이아웃 컨벤션
 
 ```
 templates/
-├── layout/
-│   ├── base.html      # 사이드바 대시보드 레이아웃
-│   └── auth.html      # 중앙 정렬 풀페이지 (로그인/회원가입)
-├── dashboard.html
-├── category.html
-└── auth/
-    ├── login.html
-    └── signup.html
+├── layout.html    # 메인 레이아웃 (다크 사이드바 포함)
+├── auth.html       # 로그인/회원가입 전용 (중앙 정렬 풀페이지)
+└── [domain]/
+    └── [page].html
 ```
 
+- 템플릿 폴더명은 단수, 파일명은 URL과 매칭되는 복수형
+- `page-css`, `page-js` 블록으로 페이지별 리소스 관리
+- 풀폭 페이지는 `container-fluid` 사용
+- 사이드바 collapse 상태는 `localStorage`로 유지
+- 레이아웃 시프트 방지: `scrollbar-gutter: stable`
+
 **주의:**
-- Thymeleaf 3.1+에서 `#httpServletRequest`, `#request` 사용 불가
-- 현재 URI 주입은 `CurrentUriInterceptor` + `WebMvcConfig` 패턴으로 처리 중
-- JS inline expression: `/*[[...]]*/` 패턴 제거할 것 (파서 에러 원인)
+- Thymeleaf 3.1+에서 `#httpServletRequest`, `#request` 직접 접근 불가 → `CurrentUriInterceptor` + `WebMvcConfig` 패턴으로 현재 URI를 모델에 주입해서 사용
+- JS inline expression `/*[[...]]*/` 패턴은 파서 에러 원인이 되므로 지양
 
 ---
 
@@ -155,66 +154,32 @@ templates/
 --color-balance: #1E2D3D;  /* 잔액 잉크 */
 ```
 
-Tabler CSS 오버라이드 시:
-- 단일 클래스 선택자는 Tabler specificity에 밀림 → 2단계 선택자 필요 (`.navbar-vertical .navbar-brand`)
-- `opacity: 1 !important` — Bootstrap 5 기본값이 hr 요소에 opacity 적용하므로
+Tabler CSS 오버라이드 시 주의점:
+- 단일 클래스 선택자는 Tabler specificity에 밀림 → 2단계 선택자 필요 (예: `.navbar-vertical .navbar-brand`)
+- Bootstrap 5는 `hr` 요소에 기본 opacity를 적용하므로, 완전 불투명하게 하려면 `opacity: 1 !important` 필요
 
 ---
 
-## Spring Security 정적 리소스
+## Spring Security 정적 리소스 처리
 
 ```java
-// SecurityFilterChain만으로는 부족함
-// WebSecurityCustomizer.ignoring() 반드시 사용
 web.ignoring().requestMatchers("/fonts/**", "/css/**", "/js/**", "/images/**");
 ```
-
----
-
-## IntelliJ 설정
-
-- **Build tool:** `IntelliJ IDEA`로 설정 (Gradle 아님)
-- CSS/정적 파일 변경 시 서버 재시작 없이 반영되려면 이게 필수
-
----
-
-## Git / 환경 분리
-
-```
-application.yml         # 공개 (GitHub에 올라감)
-application-local.yml   # 로컬 전용 (gitignore)
-```
-
-- GitHub 유저명: `yunho-dev`
-- 브랜치 전략: `main / develop / feat` (예정)
-- CI/CD: GitHub Actions (예정)
-
----
-
-## 완료된 페이지
-
-| 페이지 | 파일 | 비고 |
-|--------|------|------|
-| 로그인 | `auth/login.html` | |
-| 회원가입 | `auth/signup.html` | 클라이언트 사이드 validation, fetch/async |
-| 대시보드 | `dashboard.html` | ApexCharts 바차트 + 도넛, KPI 카드, 최근 거래 |
-| 카테고리 | `category.html` | 탭 전환 JS, 타입별 색상, container-fluid |
+`SecurityFilterChain` 내 `permitAll`만으로는 부족한 경우 `WebSecurityCustomizer.ignoring()` 병행 고려.
 
 ---
 
 ## 계좌번호 암호화
 
-**방식: JPA AttributeConverter + AES-256**
+**방식:** JPA `AttributeConverter` + AES-256
 
 ```
-global/
-└── util/
-    ├── AesUtil.java              # AES-256 암/복호화 유틸
-    └── AccountNumberConverter.java  # JPA AttributeConverter 구현
+global/util/
+├── AesUtil.java                  # AES-256 암/복호화 유틸
+└── AccountNumberConverter.java   # AttributeConverter 구현
 ```
 
 ```java
-// AccountNumberConverter.java
 @Converter
 public class AccountNumberConverter implements AttributeConverter<String, String> {
     @Override
@@ -226,30 +191,30 @@ public class AccountNumberConverter implements AttributeConverter<String, String
         return AesUtil.decrypt(cipher);
     }
 }
-
-// Account.java 엔티티에서
-@Convert(converter = AccountNumberConverter.class)
-private String accountNumber;
 ```
 
-- 암호화 키는 `application-local.yml`에서 `@Value`로 주입 (절대 하드코딩 금지)
-- DB/SQL 로그에는 항상 암호화된 값만 찍힘
-- 엔티티 비즈니스 로직은 평문 String 그대로 사용
+- 암호화 키는 `application-local.yml`에서 `@Value`로 주입 (하드코딩 금지)
+- DB/SQL 로그에는 항상 암호화된 값만 노출
+- 엔티티 비즈니스 로직 내부에서는 평문 String 그대로 다룸 (Converter가 저장/조회 시점에 자동 처리)
 
 ---
 
-## 남은 작업
+## Git / 환경 분리
 
-- [ ] UI 페이지: 결제수단, 거래내역, 계좌관리
-- [ ] 백엔드 CRUD: Category → PaymentMethod → Transaction 순
-- [ ] AWS 첫 배포 (로그인 + Transaction CRUD 완성 시점)
-- [ ] GitHub Actions CI/CD
-- [ ] 랜딩 페이지 (대시보드 스크린샷을 hero 이미지로)
-- [ ] Flyway/Liquibase 마이그레이션 (초기 개발 이후)
+```
+application.yml         # 공개 (GitHub에 올라감)
+application-local.yml   # 로컬 전용 (gitignore)
+```
+
+- **브랜치 전략:** `main` ← `develop` ← `feat/*`. 모든 변경사항(코드/문서 포함)은 `develop` 이하에서 커밋하고, `main`은 검증된 결과물을 merge만 받는다 (직접 커밋 지양 — 두 브랜치가 갈라지는 것 방지).
+- **커밋 메시지:** Conventional Commits (`feat:`, `fix:`, `docs:` 등, 콜론 뒤 공백 하나)
+- **CLI 우선:** 기본 작업은 터미널로, 복잡한 브랜치 히스토리 시각 확인용으로만 Sourcetree 보조 사용
+- GitHub 유저명: `yunho-dev` — 포트폴리오 목적으로 public 저장소 유지
 
 ---
 
-## 코드 스타일
+## 코드 스타일 / AI 협업 원칙
 
-- 주석: 최소화. 명백한 로직엔 달지 않음. 비자명한 통합 포인트에만 TODO 허용
-- 검증·비즈니스 로직은 직접 설계, AI는 보일러플레이트에 활용
+- 주석: 최소화하되, "왜 이렇게 했는지"가 자명하지 않은 지점에는 근거를 남긴다. 단순 문법 설명("이건 반복문입니다")보다 "이 프로젝트에서 왜 이 방식을 택했는지"에 집중.
+- 검증·비즈니스 로직은 직접 설계하고 이해한 뒤 작성. AI는 보일러플레이트 생성과 개념 설명에 활용하되, 이해 없이 그대로 복붙하지 않는다 ("딸깍 코딩" 지양).
+- Spring Boot 4.1.x처럼 최신 버전은 AI의 학습 데이터 범위를 벗어날 수 있으므로, 실제 빌드 에러가 발생하지 않는 한 Spring Initializer 자동 생성 결과를 신뢰한다.
