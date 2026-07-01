@@ -3,262 +3,491 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title layout:title-pattern="$CONTENT_TITLE | 살림">살림</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE | 살림">살림</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
 
-  <style>
-    @font-face {
-      font-family: 'Pretendard Variable';
-      src: url('/fonts/pretendard/woff2/PretendardVariable.woff2') format('woff2');
-      font-weight: 100 900;
-      font-display: swap;
-    }
-  </style>
+    <style>
+        :root {
+            --salim-income: #2D6A4F;
+            --salim-expense: #C1604A;
+            --salim-balance: #1E2D3D;
+            --salim-sidebar-bg: #1E2D3D;
+            --salim-sidebar-active: #2D6A4F;
+        }
 
-  <style>
-    :root {
-      --salim-income:      #2D6A4F;
-      --salim-expense:     #C1604A;
-      --salim-balance:     #1E2D3D;
-      --salim-sidebar-bg:  #1E2D3D;
-      --salim-sidebar-active: #2D6A4F;
-    }
+        html {
+            overflow-y: auto;
+            scrollbar-gutter: stable;
+        }
 
-    body {
-      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+        body {
+            font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+            --tblr-body-bg: #F4F6FA;
+        }
 
-    .navbar-vertical {
-      background-color: var(--salim-sidebar-bg) !important;
-      border-right: none !important;
-    }
+        .page-wrapper {
+            background-color: #F4F6FA;
+        }
 
-    .navbar-brand {
-      color: #ffffff !important;
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
+        .page-body {
+            margin-top: 1.0rem;
+        }
 
-    .navbar-vertical .nav-link {
-      color: rgba(255, 255, 255, 0.65) !important;
-      border-radius: 6px;
-      margin: 2px 8px;
-      transition: background 0.15s, color 0.15s;
-    }
+        /* 브랜드 로고 이미지 비율 유지 */
+        .navbar-brand-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
 
-    .navbar-vertical .nav-link:hover {
-      color: #ffffff !important;
-      background-color: rgba(255, 255, 255, 0.08) !important;
-    }
+        section {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
 
-    .navbar-vertical .nav-link.active {
-      color: #ffffff !important;
-      background-color: var(--salim-sidebar-active) !important;
-    }
+        /* ===== 사이드바 본체 ===== */
+        .navbar-vertical {
+            background-color: var(--salim-sidebar-bg) !important;
+            border-right: none !important;
+            width: 248px; /* 살짝 넓게 (기본 15rem=240px → 248px) */
+        }
 
-    .navbar-vertical .nav-link .nav-link-icon {
-      color: inherit !important;
-    }
+        .navbar-vertical .container-fluid {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
 
-    /* 사이드바 하단 유저 영역 */
-    .sidebar-user {
-      padding: 12px 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      margin-top: auto;
-    }
+        /* ===== 브랜드(로고) - 상하 여백 넉넉하게 ===== */
+        .navbar-vertical .navbar-brand {
+            color: #ffffff !important;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            width: 100% !important;
+            justify-content: flex-start !important;
+            gap: 10px;
+            padding: 16px 8px !important; /* 상하 16px로 헤더 영역 크게 */
+            margin-left: 10px !important;
+            margin-bottom: 5px !important;
+        }
 
-    .sidebar-user .user-name {
-      color: #ffffff;
-      font-size: 0.875rem;
-      font-weight: 600;
-      line-height: 1.2;
-    }
+        .brand-logo {
+            background-color: transparent;
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .sidebar-user .user-email {
-      color: rgba(255, 255, 255, 0.45);
-      font-size: 0.75rem;
-    }
+        /* ===== 네비 링크 - 높이/간격 키움 ===== */
+        .navbar-vertical .navbar-nav {
+            gap: 4px; /* 아이템 사이 간격 */
+            padding-top: 8px !important;
+        }
 
-    .sidebar-logout {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-      padding: 4px 0;
-      color: rgba(255, 255, 255, 0.45) !important;
-      font-size: 0.8125rem;
-      text-decoration: none;
-      transition: color 0.15s;
-    }
+        .navbar-vertical .nav-link {
+            color: rgba(255, 255, 255, 0.65) !important;
+            border-radius: 8px;
+            margin: 0 8px;
+            padding: 11px 12px; /* 세로 패딩 8→11px, 메뉴 키 큼 */
+            display: flex;
+            align-items: center;
+            gap: 13px; /* 아이콘-텍스트 간격 넓게 */
+            font-size: 0.9375rem;
+            transition: background 0.15s, color 0.15s;
+        }
 
-    .sidebar-logout:hover {
-      color: rgba(255, 255, 255, 0.85) !important;
-    }
+        .navbar-vertical .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.08) !important;
+        }
 
-    /* 전역 수입/지출 유틸리티 */
-    .text-income  { color: var(--salim-income)  !important; }
-    .text-expense { color: var(--salim-expense) !important; }
-    .text-balance { color: var(--salim-balance) !important; }
+        .navbar-vertical .nav-link.active {
+            color: #ffffff !important;
+            background-color: var(--salim-sidebar-active) !important;
+        }
 
-    .badge-income  { background-color: rgba(45, 106, 79, 0.12);  color: var(--salim-income);  }
-    .badge-expense { background-color: rgba(193, 96, 74, 0.12);  color: var(--salim-expense); }
-    .badge-balance { background-color: rgba(30, 45, 61, 0.10);   color: var(--salim-balance); }
-  </style>
+        /* 아이콘 18px 고정, 항상 표시 */
+        .navbar-vertical .nav-link .nav-link-icon {
+            color: inherit !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin: 0;
+        }
 
-  <th:block layout:fragment="page-css"></th:block>
+        .navbar-vertical .nav-link .nav-link-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ===== 하단 유저 영역 - 패딩 넉넉 ===== */
+        .sidebar-user {
+            padding: 16px 18px;
+            margin-top: auto;
+        }
+
+        .sidebar-user .user-name {
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .sidebar-user .user-email {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.78rem;
+        }
+
+        .sidebar-logout {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 4px 0;
+            color: rgba(255, 255, 255, 0.45) !important;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .sidebar-logout:hover {
+            color: rgba(255, 255, 255, 0.85) !important;
+            background-color: transparent !important;
+        }
+
+        /* ===== 구분선 ===== */
+        .sidebar-hr {
+            border: none !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+            margin: 0 18px !important;
+            opacity: 1 !important;
+        }
+
+        /* ===== 접기 버튼 - 크고 시원하게 ===== */
+        .sidebar-collapse {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 18px; /* 패딩 키움 */
+            color: rgba(255, 255, 255, 0.65) !important;
+            font-size: 0.9rem; /* 폰트 키움 */
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            transition: color 0.15s;
+        }
+
+        .sidebar-collapse svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .sidebar-collapse:hover {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        /* ===== 사이드바 접기 상태 ===== */
+        .wrapper.navbar-vertical-collapsed .navbar-vertical {
+            width: 76px;
+        }
+
+        .wrapper.navbar-vertical-collapsed .navbar-brand span:not(.brand-logo),
+        .wrapper.navbar-vertical-collapsed .nav-link-title,
+        .wrapper.navbar-vertical-collapsed .sidebar-user .user-name,
+        .wrapper.navbar-vertical-collapsed .sidebar-user .user-email,
+        .wrapper.navbar-vertical-collapsed #sidebarCollapseText {
+            display: none;
+        }
+
+        .wrapper.navbar-vertical-collapsed .navbar-vertical .nav-link {
+            justify-content: center;
+            margin: 0 8px;
+            padding: 11px;
+        }
+
+        .wrapper.navbar-vertical-collapsed .sidebar-collapse {
+            justify-content: center;
+        }
+
+        .wrapper.navbar-vertical-collapsed .page-wrapper {
+            margin-left: 76px;
+        }
+
+        /* ===== 수입/지출 유틸리티 ===== */
+        .text-income {
+            color: var(--salim-income) !important;
+        }
+
+        .text-expense {
+            color: var(--salim-expense) !important;
+        }
+
+        .text-balance {
+            color: var(--salim-balance) !important;
+        }
+
+        .badge-income {
+            background-color: rgba(45, 106, 79, 0.12);
+            color: var(--salim-income);
+        }
+
+        .badge-expense {
+            background-color: rgba(193, 96, 74, 0.12);
+            color: var(--salim-expense);
+        }
+
+        .badge-balance {
+            background-color: rgba(30, 45, 61, 0.10);
+            color: var(--salim-balance);
+        }
+    </style>
+
+    <th:block layout:fragment="page-css"></th:block>
 </head>
 
 <body class="antialiased">
-  <div class="wrapper">
+<div class="wrapper">
+<script>
+    // 새 페이지 로드 시 접힘 상태 즉시 복원 (깜빡임 방지를 위해 렌더링 전에 동기 실행)
+    if (localStorage.getItem('sidebarCollapsed') === 'true') {
+        document.currentScript.parentElement.classList.add('navbar-vertical-collapsed');
+    }
+</script>
 
     <aside class="navbar navbar-vertical navbar-expand-lg">
-      <div class="container-fluid">
+        <div class="container-fluid">
 
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navbar-menu">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <a href="/dashboard" class="navbar-brand navbar-brand-autodark">
-          <span>살림</span>
-        </a>
-
-        <div class="collapse navbar-collapse" id="navbar-menu">
-          <ul class="navbar-nav pt-lg-3">
-
-            <li class="nav-item">
-              <a class="nav-link"
-                 th:classappend="${currentUri == '/dashboard'} ? 'active'"
-                 href="/dashboard">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                  </svg>
+            <!-- 브랜드 -->
+            <a href="/dashboard" class="navbar-brand navbar-brand-autodark">
+                <span class="brand-logo">
+                    <img th:src="@{/images/logo/salrim-symbol-reversed.svg}" alt="살림" class="navbar-brand-logo">
                 </span>
-                <span class="nav-link-title">대시보드</span>
-              </a>
-            </li>
+                <span>살림</span>
+            </a>
 
-            <li class="nav-item">
-              <a class="nav-link"
-                 th:classappend="${currentUri.startsWith('/transactions')} ? 'active'"
-                 href="/transactions">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-                    <rect x="9" y="3" width="6" height="4" rx="2"/>
-                    <line x1="9" y1="12" x2="15" y2="12"/>
-                    <line x1="9" y1="16" x2="13" y2="16"/>
-                  </svg>
-                </span>
-                <span class="nav-link-title">거래 내역</span>
-              </a>
-            </li>
+            <div class="collapse navbar-collapse" id="navbar-menu">
+                <ul class="navbar-nav pt-lg-3">
 
-            <li class="nav-item">
-              <a class="nav-link"
-                 th:classappend="${currentUri.startsWith('/categories')} ? 'active'"
-                 href="/categories">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 6h16M4 12h16M4 18h7"/>
-                  </svg>
-                </span>
-                <span class="nav-link-title">카테고리</span>
-              </a>
-            </li>
+                    <!-- 대시보드 -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri == '/dashboard'} ? 'active'"
+                           href="/dashboard">
+                        <span class="nav-link-icon">
+                          <!-- 시안에 맞춰 직각 그리드 형태 유지 -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                          </svg>
+                        </span>
+                            <span class="nav-link-title">대시보드</span>
+                        </a>
+                    </li>
 
-            <li class="nav-item">
-              <a class="nav-link"
-                 th:classappend="${currentUri.startsWith('/payment-methods')} ? 'active'"
-                 href="/payment-methods">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2"/>
-                    <line x1="2" y1="10" x2="22" y2="10"/>
-                  </svg>
-                </span>
-                <span class="nav-link-title">결제수단</span>
-              </a>
-            </li>
+                    <!-- 거래 내역 -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/transactions')} ? 'active'"
+                           href="/transactions">
+                        <span class="nav-link-icon">
+                          <!-- 수정 없음 (유지) -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                            <rect x="9" y="3" width="6" height="4" rx="2"/>
+                            <line x1="9" y1="12" x2="15" y2="12"/>
+                            <line x1="9" y1="16" x2="13" y2="16"/>
+                          </svg>
+                        </span>
+                            <span class="nav-link-title">거래 내역</span>
+                        </a>
+                    </li>
 
-            <li class="nav-item">
-              <a class="nav-link"
-                 th:classappend="${currentUri.startsWith('/settings')} ? 'active'"
-                 href="/settings">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06
-                             a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
-                             A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83
-                             l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
-                             A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83
-                             l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
-                             a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83
-                             l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
-                             a1.65 1.65 0 0 0-1.51 1z"/>
-                  </svg>
-                </span>
-                <span class="nav-link-title">설정</span>
-              </a>
-            </li>
+                    <!-- 카테고리 -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/categories')} ? 'active'"
+                           href="/categories">
+                        <span class="nav-link-icon">
+                          <!-- 시안에 맞춰 둥근 모서리(rx="1") 그리드 형태 유지 -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="4" width="6" height="6" rx="1"/>
+                            <rect x="14" y="4" width="6" height="6" rx="1"/>
+                            <rect x="4" y="14" width="6" height="6" rx="1"/>
+                            <rect x="14" y="14" width="6" height="6" rx="1"/>
+                          </svg>
+                        </span>
+                            <span class="nav-link-title">카테고리</span>
+                        </a>
+                    </li>
 
-          </ul>
+                    <!-- 결제수단 -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/payment-methods')} ? 'active'"
+                           href="/payment-methods">
+                        <span class="nav-link-icon">
+                          <!-- 수정 없음 (유지) -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <line x1="2" y1="10" x2="22" y2="10"/>
+                          </svg>
+                        </span>
+                            <span class="nav-link-title">결제수단</span>
+                        </a>
+                    </li>
 
-          <div class="sidebar-user mt-auto">
-            <div class="d-flex align-items-center gap-2">
-              <span class="avatar avatar-sm"
-                    style="background-color: var(--salim-income); color: #fff; font-weight: 700;">
-                홍
-              </span>
-              <div>
-                <div class="user-name">홍길동</div>
-                <div class="user-email">hong@salrim.com</div>
-              </div>
+                    <!-- 계좌관리 -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/accounts')} ? 'active'"
+                           href="/accounts">
+                        <span class="nav-link-icon">
+                          <!-- ★오류 수정: 깨진 xmlns 주소를 올바른 URL로 교체하여 정상 출력 보장 -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="16" rx="2"/>
+                            <line x1="7" y1="9" x2="17" y2="9"/>
+                            <line x1="7" y1="13" x2="17" y2="13"/>
+                            <line x1="7" y1="17" x2="13" y2="17"/>
+                          </svg>
+                        </span>
+                            <span class="nav-link-title">계좌관리</span>
+                        </a>
+                    </li>
+
+                    <!-- 설정 -->
+                    <!--
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/settings')} ? 'active'"
+                           href="/settings">
+                          <span class="nav-link-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="12" r="3"/>
+                              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06
+                                       a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
+                                       A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83
+                                       l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
+                                       A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83
+                                       l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
+                                       a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83
+                                       l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
+                                       a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                          </span>
+                            <span class="nav-link-title">설정</span>
+                        </a>
+                    </li>
+                    -->
+
+                </ul>
+
+                <hr class="sidebar-hr">
+
+                <!-- 유저 -->
+                <div class="sidebar-user">
+                    <div class="d-flex align-items-center gap-2">
+            <span class="avatar avatar-sm"
+                  style="background-color: var(--salim-income); color: #fff; font-weight: 700;">
+              홍
+            </span>
+                        <div>
+                            <div class="user-name">홍길동</div>
+                            <div class="user-email">hong@salrim.com</div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="sidebar-logout btn btn-link p-0 border-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            로그아웃
+                        </button>
+                    </form>
+                </div>
+
+                <hr class="sidebar-hr">
+
+                <!-- 접기 -->
+                <button class="sidebar-collapse" id="sidebarCollapseBtn" onclick="toggleSidebar()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         id="sidebarCollapseIcon">
+                        <polyline points="11 17 6 12 11 7"/>
+                        <polyline points="18 17 13 12 18 7"/>
+                    </svg>
+                    <span id="sidebarCollapseText">접기</span>
+                </button>
+
             </div>
-
-            <form th:action="@{/logout}" method="post" class="d-inline">
-              <button type="submit" class="sidebar-logout btn btn-link p-0 border-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                  <polyline points="16 17 21 12 16 7"/>
-                  <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                로그아웃
-              </button>
-            </form>
-          </div>
-
         </div>
-      </div>
     </aside>
 
     <div class="page-wrapper">
-      <div layout:fragment="content"></div>
+        <div layout:fragment="content"></div>
     </div>
 
-  </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
-  <th:block layout:fragment="page-js"></th:block>
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+<script>
+    function toggleSidebar() {
+        const wrapper = document.querySelector('.wrapper');
+        const icon = document.getElementById('sidebarCollapseIcon');
+        const text = document.getElementById('sidebarCollapseText');
+        const isCollapsed = wrapper.classList.toggle('navbar-vertical-collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+        if (isCollapsed) {
+            icon.style.transform = 'rotate(180deg)';
+            text.textContent = '펼치기';
+        } else {
+            icon.style.transform = '';
+            text.textContent = '접기';
+        }
+    }
+
+    // 접힘 상태 복원 시 아이콘/텍스트도 동기화
+    document.addEventListener('DOMContentLoaded', function () {
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.getElementById('sidebarCollapseIcon').style.transform = 'rotate(180deg)';
+            document.getElementById('sidebarCollapseText').textContent = '펼치기';
+        }
+    });
+</script>
+<th:block layout:fragment="page-js"></th:block>
 
 </body>
 </html>

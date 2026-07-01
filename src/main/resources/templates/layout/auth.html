@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title layout:title-pattern="$CONTENT_TITLE - 살림">살림</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
@@ -16,7 +17,7 @@
   <th:block layout:fragment="styles"></th:block>
 </head>
 <body class="d-flex flex-column bg-white">
-<div class="page page-center">
+<div class="page page-center" th:classappend="${currentUri == '/signup'} ? 'page-signup'">
   <div class="container container-tight py-4">
     <div layout:fragment="content"></div>
   </div>

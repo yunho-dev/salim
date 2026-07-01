@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <g transform="translate(-6.25 -3.75)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60.00 154.00 Q52 154 52.00 146.00 L52.00 118.00 Q52 110 59.27 106.67 L140.73 69.33 Q148 66 148.00 74.00 L148.00 146.00 Q148 154 140.00 154.00 Z" stroke="#1E2D3D" stroke-width="13"></path>
+    <line x1="52" y1="110" x2="148" y2="66" stroke="#2D6A4F" stroke-width="24"></line>
+    <circle cx="148" cy="66" r="19" fill="#2D6A4F"></circle>
+  </g>
+</svg>

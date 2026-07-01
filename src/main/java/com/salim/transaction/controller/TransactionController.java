@@ -1,15 +1,16 @@
-package com.salim.dashboard.controller;
+package com.salim.transaction.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/dashboard")
-public class DashboardController {
+@RequestMapping("/transactions")
+class TransactionController {
 
     @GetMapping("")
     public String dashboardPage() {
-        return "dashboard/dashboard";
+        return "transaction/transactions";
     }
+
 }
