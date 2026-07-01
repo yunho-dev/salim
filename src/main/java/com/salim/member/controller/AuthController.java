@@ -2,17 +2,16 @@ package com.salim.member.controller;
 
 import com.salim.member.service.AuthService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -25,6 +24,13 @@ class AuthController {
     // TODO: 랜딩 페이지 추가되면 "/" 매핑 제거
     @GetMapping({"/", "/login"})
     public String loginPage() {
+        // 이미 인증된 사용자면 대시보드로 바로 보냄
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()
+                && !(auth instanceof AnonymousAuthenticationToken)) {
+            return "redirect:/dashboard";
+        }
+
         logger.info("로그인 페이지 접근");
         return "member/login";
     }
@@ -58,4 +64,18 @@ class AuthController {
             return "redirect:/";
         }
     }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse res) {
+        Cookie cookie = new Cookie("token", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // 즉시 만료시켜서 브라우저가 쿠키 삭제하게 함
+        res.addCookie(cookie);
+
+        logger.info("로그아웃 처리");
+        return "redirect:/login";
+    }
+
 }

@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +27,13 @@ class MemberController {
     // 회원가입 페이지
     @GetMapping({"/signup"})
     public String signUpPage() {
+        // 이미 인증된 사용자면 대시보드로 바로 보냄
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()
+                && !(auth instanceof AnonymousAuthenticationToken)) {
+            return "redirect:/dashboard";
+        }
+
         logger.info("회원가입 페이지 접근");
         return "member/signup";
     }
