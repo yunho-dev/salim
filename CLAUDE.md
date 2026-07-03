@@ -4,6 +4,21 @@
 
 ---
 
+## 개발 명령어
+
+```bash
+./gradlew bootRun                              # 로컬 서버 실행 (application-local.yml 프로필 사용)
+./gradlew build                                # 전체 빌드 (테스트 포함)
+./gradlew test                                 # 전체 테스트 실행
+./gradlew test --tests "SalimApplicationTests" # 단일 테스트 클래스 실행
+```
+
+- PostgreSQL이 로컬에서 떠 있어야 함 (`application-local.yml`의 `jdbc:postgresql://localhost:5432/salim_db`, 스키마 `salim`, 계정 `salim`).
+- IntelliJ에서 작업 시 Build tool을 `IntelliJ IDEA`로 설정해야 정적 리소스 핫리로드가 동작함 (Gradle 기본값 아님, 위 표 참고).
+- `spring.jpa.hibernate.ddl-auto: update` — 마이그레이션 도구 없이 엔티티 변경사항이 곧바로 스키마에 반영됨. 컬럼 삭제/타입 변경처럼 update가 못 따라가는 변경은 수동 DDL 필요.
+
+---
+
 ## 기술 스택
 
 | 분류 | 기술 |
@@ -45,8 +60,24 @@ com.salim.[domain]
 global/
 ├── jwt        # JwtProvider, JwtAuthenticationFilter
 ├── security   # SecurityConfig
-└── util       # AesUtil, Converter 등
+└── util       # AesUtil, Converter 등 (계좌번호 암호화 구현 시 추가 예정, 현재 미구현)
 ```
+
+도메인 패키지 내부 레이어링 (예: `account`, `category`, `payment`, `transaction`):
+```
+[domain]/
+├── controller
+├── dao        # Repository 계층 (member 도메인만 예외적으로 "repository"로 명명)
+├── dto
+└── service
+```
+
+### 현재 구현 상태
+
+- **완성:** `member` (회원가입/로그인, JWT 발급·검증, `MemberRepository`/`AuthService`/`MemberService`)
+- **스캐폴딩만 존재 (화면 라우팅용 `@Controller`만 있고 dao/dto/service는 빈 패키지):** `account`, `category`, `dashboard`, `payment`, `transaction` — 각 컨트롤러는 정적 페이지 뷰 이름만 반환하는 상태이며 실제 CRUD/비즈니스 로직은 미구현
+- `global/util`(AesUtil, AccountNumberConverter)은 위 컨벤션 문서화만 되어 있고 아직 코드 없음 — 계좌 암호화 작업 시작 시 신규 작성
+- `src/test/java/org/example/salim/SalimApplicationTests.java`는 Spring Initializr가 생성한 기본 패키지(`org.example.salim`)에 남아 있음. 나머지 코드는 전부 `com.salim` 하위이므로 새 테스트를 추가할 때 패키지 위치에 주의 (관례상 `com.salim` 하위에 작성할 것)
 
 ---
 
