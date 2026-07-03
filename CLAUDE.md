@@ -75,7 +75,7 @@ global/
 ### 현재 구현 상태
 
 - **완성:** `member` (회원가입/로그인, JWT 발급·검증, `MemberRepository`/`AuthService`/`MemberService`)
-- **스캐폴딩만 존재 (화면 라우팅용 `@Controller`만 있고 dao/dto/service는 빈 패키지):** `account`, `category`, `dashboard`, `payment`, `transaction` — 각 컨트롤러는 정적 페이지 뷰 이름만 반환하는 상태이며 실제 CRUD/비즈니스 로직은 미구현
+- **스캐폴딩만 존재 (화면 라우팅용 `@Controller`만 있고 repository/dto/service는 빈 패키지):** `account`, `category`, `dashboard`, `payment`, `transaction` — 각 컨트롤러는 정적 페이지 뷰 이름만 반환하는 상태이며 실제 CRUD/비즈니스 로직은 미구현
 - `global/util`(AesUtil, AccountNumberConverter)은 위 컨벤션 문서화만 되어 있고 아직 코드 없음 — 계좌 암호화 작업 시작 시 신규 작성
 - `src/test/java/org/example/salim/SalimApplicationTests.java`는 Spring Initializr가 생성한 기본 패키지(`org.example.salim`)에 남아 있음. 나머지 코드는 전부 `com.salim` 하위이므로 새 테스트를 추가할 때 패키지 위치에 주의 (관례상 `com.salim` 하위에 작성할 것)
 
