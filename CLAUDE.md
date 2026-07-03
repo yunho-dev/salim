@@ -63,11 +63,11 @@ global/
 └── util       # AesUtil, Converter 등 (계좌번호 암호화 구현 시 추가 예정, 현재 미구현)
 ```
 
-도메인 패키지 내부 레이어링 (예: `account`, `category`, `payment`, `transaction`):
+도메인 패키지 내부 레이어링 (모든 도메인 공통):
 ```
 [domain]/
 ├── controller
-├── dao        # Repository 계층 (member 도메인만 예외적으로 "repository"로 명명)
+├── repository
 ├── dto
 └── service
 ```
