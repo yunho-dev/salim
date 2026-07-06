@@ -1,5 +1,6 @@
 package com.salim.member.service;
 
+import com.salim.member.dto.MemberResponse;
 import com.salim.member.dto.SignupRequest;
 import com.salim.member.entity.Member;
 import com.salim.member.repository.MemberRepository;
@@ -36,7 +37,7 @@ public class MemberService {
                 .memberId(request.memberId())
                 .password(passwordEncoder.encode(request.password()))
                 .email(request.email())
-                .name(request.name())
+                .nickname(request.nickname())
                 .build();
 
         // 3. DB 저장
@@ -51,5 +52,12 @@ public class MemberService {
     // 이메일 체크
     public boolean existsByEmail(String email) {
         return memberRepository.existsByEmail(email);
+    }
+
+    // 로그인 유저 정보 조회
+    public MemberResponse findLoginMember(String memberId) {
+        return memberRepository.findByMemberId(memberId)
+                .map(MemberResponse::from)
+                .orElse(null);
     }
 }

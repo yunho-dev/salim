@@ -174,13 +174,13 @@
                 <!-- 유저 -->
                 <div class="sidebar-user">
                     <div class="d-flex align-items-center gap-2">
-            <span class="avatar avatar-sm"
-                  style="background-color: var(--salim-income); color: #fff; font-weight: 700;">
-              홍
-            </span>
+                        <span class="avatar avatar-sm" style="background-color: var(--salim-income); color: #fff; font-weight: 700;"
+                              th:text="${loginMember != null ? #strings.substring(loginMember.nickname, 0, 1) : '?'}">
+                            살
+                        </span>
                         <div>
-                            <div class="user-name">홍길동</div>
-                            <div class="user-email">hong@salrim.com</div>
+                            <div class="user-name" th:text="${loginMember?.nickname}">유저명을 찾지 못했습니다.</div>
+                            <div class="user-email" th:text="${loginMember?.email}">이메일을 찾지 못했습니다.</div>
                         </div>
                     </div>
 

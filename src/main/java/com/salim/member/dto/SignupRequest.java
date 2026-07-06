@@ -3,6 +3,7 @@ package com.salim.member.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public record SignupRequest(
         @Pattern(regexp = "^[a-z][a-z0-9]{3,19}$", message = "아이디는 영문 소문자로 시작하는 4~20자입니다.")
@@ -14,5 +15,7 @@ public record SignupRequest(
 
         @Email @NotBlank String email,
 
-        @NotBlank String name) {
+        @NotBlank
+        @Size(max = 20, message = "닉네임은 20자를 초과할 수 없습니다.")
+        String nickname) {
 }

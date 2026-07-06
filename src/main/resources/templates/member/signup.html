@@ -76,16 +76,16 @@
           <small id="emailMsg" class="form-text"></small>
         </div>
 
-        <!-- 이름 -->
+        <!-- 닉네임 -->
         <div class="mb-3">
           <div class="d-flex justify-content-between align-items-center">
-            <label class="form-label mb-0">이름</label>
+            <label class="form-label mb-0">닉네임</label>
           </div>
           <div class="input-group input-group-flat mt-1">
-            <input type="text" id="name" name="name" class="form-control"
-                   placeholder="이름 입력" autocomplete="name">
+            <input type="text" id="nickname" name="nickname" class="form-control"
+                   placeholder="닉네임 입력" autocomplete="nickname">
           </div>
-          <small id="nameMsg" class="form-text"></small>
+          <small id="nicknameMsg" class="form-text"></small>
         </div>
 
         <!-- 가입 버튼 -->
@@ -176,11 +176,11 @@
       }
     });
 
-    // 이름: 빈값만 체크
-    let isNameValid = false;
-    document.getElementById('name').addEventListener('blur', function () {
-      isNameValid = this.value.trim().length > 0;
-      showMsg('nameMsg', isNameValid ? '' : '이름을 입력해주세요.', isNameValid);
+    // 닉네임: 빈값만 체크
+    let isNicknameValid = false;
+    document.getElementById('nickname').addEventListener('blur', function () {
+      isNicknameValid = this.value.trim().length > 0;
+      showMsg('nicknameMsg', isNicknameValid ? '' : '닉네임을 입력해주세요.', isNicknameValid);
     });
 
     // 비밀번호 표시 토글
@@ -205,7 +205,7 @@
       if (!isPwValid)        { showMsg('passwordMsg', '비밀번호 형식을 확인해주세요.', false); return; }
       if (!isPwChkValid)     { showMsg('passwordChkMsg', '비밀번호 확인이 필요합니다.', false); return; }
       if (!isEmailAvailable) { showMsg('emailMsg', '이메일 중복 확인이 필요합니다.', false); return; }
-      if (!isNameValid)      { showMsg('nameMsg', '이름을 입력해주세요.', false); return; }
+      if (!isNicknameValid)  { showMsg('nicknameMsg', '닉네임을 입력해주세요.', false); return; }
 
       try {
         const res = await fetch('/api/members/signup', {
@@ -215,7 +215,7 @@
             memberId: document.getElementById('memberId').value,
             password: document.getElementById('password').value,
             email: document.getElementById('email').value,
-            name: document.getElementById('name').value
+            nickname: document.getElementById('nickname').value
           })
         });
 

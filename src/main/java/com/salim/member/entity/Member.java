@@ -24,8 +24,8 @@ public class Member {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "name", nullable = false, length = 100, unique = true)
-    private String name;
+    @Column(name = "nickname", nullable = false, length = 20)
+    private String nickname;
 
     @Column(name = "email", nullable = false, length = 100)
     private String email;
@@ -39,15 +39,15 @@ public class Member {
     private LocalDateTime updateDate;
 
     @Builder
-    public Member(String memberId, String password, String email, String name) {
+    public Member(String memberId, String password, String email, String nickname) {
         this.memberId = memberId;
         this.password = password;
         this.email = email;
-        this.name = name;
+        this.nickname = nickname;
     }
 
-    public void changeName(String name) {
-        this.name = name;
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void changePassword(String encodedPassword) {
