@@ -1,0 +1,266 @@
+.card {
+    border: 1px solid #e6e9ee;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.page-pretitle {
+    color: #8a97a5;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.page-title {
+    font-size: 1.4375rem;
+    font-weight: 800;
+    color: var(--salim-balance);
+    letter-spacing: -0.01em;
+}
+
+/* ===== 추가 버튼 ===== */
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--salim-income);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+.btn-add:hover { background: #255a43; color: #fff; }
+
+/* ===== 탭 ===== */
+.cat-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-bottom: 1px solid #e6e9ee;
+}
+.cat-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 11px 16px 13px;
+    margin-bottom: -1px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #8a97a5;
+    cursor: pointer;
+}
+/* 활성 탭: 유형별 색상 (지출=테라코타 / 수입=그린) */
+.cat-tab.active[data-type="expense"] {
+    color: var(--salim-expense);
+    border-bottom-color: var(--salim-expense);
+}
+.cat-tab.active[data-type="income"] {
+    color: var(--salim-income);
+    border-bottom-color: var(--salim-income);
+}
+.cat-tab-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 20px;
+    background: #eef1f4;
+    color: #8a97a5;
+}
+.cat-tab.active[data-type="expense"] .cat-tab-count {
+    background: rgba(193, 96, 74, 0.12);
+    color: var(--salim-expense);
+}
+.cat-tab.active[data-type="income"] .cat-tab-count {
+    background: rgba(45, 106, 79, 0.12);
+    color: var(--salim-income);
+}
+
+/* ===== 카테고리 그리드 ===== */
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+}
+.cat-card {
+    background: #fff;
+    border: 1px solid #e6e9ee;
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cat-card:hover {
+    border-color: #d4dae1;
+    box-shadow: 0 3px 10px rgba(30, 45, 61, 0.05);
+}
+.cat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cat-icon.expense { background: rgba(193, 96, 74, 0.12); color: var(--salim-expense); }
+.cat-icon.income  { background: rgba(45, 106, 79, 0.12); color: var(--salim-income); }
+.cat-icon svg { width: 22px; height: 22px; }
+
+.cat-name { font-size: 0.9375rem; font-weight: 700; color: var(--salim-balance); }
+.cat-count { font-size: 0.75rem; color: #8a97a5; font-weight: 600; margin-top: 3px; }
+
+.cat-action {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e6e9ee;
+    background: #fff;
+    border-radius: 8px;
+    color: #5b6b7b;
+    cursor: pointer;
+}
+.cat-action:hover { background: #f4f6fa; color: var(--salim-balance); }
+.cat-action.delete:hover {
+    background: rgba(193, 96, 74, 0.08);
+    color: var(--salim-expense);
+    border-color: rgba(193, 96, 74, 0.3);
+}
+
+/* ===== 빈 상태 ===== */
+.cat-empty {
+    background: #fff;
+    border: 1px solid #e6e9ee;
+    border-radius: 12px;
+    padding: 72px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.cat-empty-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #F4F6FA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    color: #b3bdc8;
+}
+.cat-empty-title { font-size: 1.0625rem; font-weight: 800; color: var(--salim-balance); margin-bottom: 7px; }
+.cat-empty-desc { font-size: 0.85rem; color: #8a97a5; max-width: 340px; line-height: 1.55; margin-bottom: 24px; }
+
+/* ===== 모달 ===== */
+.salim-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 45, 61, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    padding: 24px;
+}
+.salim-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 480px;
+    max-width: 100%;
+    box-shadow: 0 24px 60px rgba(30, 45, 61, 0.3);
+    overflow: hidden;
+}
+.salim-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid #f0f2f5;
+}
+.salim-modal-header h2 { font-size: 1.0625rem; font-weight: 800; color: var(--salim-balance); margin: 0; }
+.modal-close {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; border-radius: 8px;
+    color: #8a97a5; cursor: pointer;
+}
+.modal-close:hover { background: #f4f6fa; color: var(--salim-balance); }
+
+.salim-modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 22px; }
+.form-label-sm { display: block; font-size: 0.78rem; font-weight: 700; color: #5b6b7b; margin-bottom: 9px; }
+
+/* 유형 토글 - 시안 색상 반영 (지출=테라코타 / 수입=그린) */
+.type-toggle { display: flex; background: #F4F6FA; border-radius: 9px; padding: 4px; }
+.type-toggle button {
+    flex: 1; padding: 9px; border: none; border-radius: 7px;
+    font-size: 0.85rem; font-weight: 700; cursor: pointer;
+    background: transparent; color: #8a97a5;
+    transition: background 0.15s, color 0.15s;
+}
+.type-toggle button.active[data-type="expense"] {
+    background: var(--salim-expense); color: #fff;
+    box-shadow: 0 1px 3px rgba(193, 96, 74, 0.3);
+}
+.type-toggle button.active[data-type="income"] {
+    background: var(--salim-income); color: #fff;
+    box-shadow: 0 1px 3px rgba(45, 106, 79, 0.3);
+}
+
+.salim-input {
+    width: 100%; padding: 11px 13px;
+    border: 1px solid #e6e9ee; border-radius: 9px;
+    font-size: 0.875rem; color: var(--salim-balance);
+    outline: none; background: #fff;
+}
+.salim-input:focus {
+    border-color: var(--salim-income);
+    box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+}
+
+/* 아이콘 피커 */
+.icon-picker { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.icon-picker button {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #e6e9ee; background: #fff; border-radius: 9px;
+    color: #5b6b7b; cursor: pointer;
+}
+.icon-picker button:hover { background: #f4f6fa; }
+/* 활성 아이콘 색상: 선택된 유형(지출/수입)을 따라감 */
+.icon-picker[data-type="expense"] button.active {
+    border-color: var(--salim-expense);
+    background: rgba(193, 96, 74, 0.08);
+    color: var(--salim-expense);
+}
+.icon-picker[data-type="income"] button.active {
+    border-color: var(--salim-income);
+    background: rgba(45, 106, 79, 0.08);
+    color: var(--salim-income);
+}
+.icon-picker button svg { width: 19px; height: 19px; }
+
+.salim-modal-footer {
+    display: flex; justify-content: flex-end; gap: 10px;
+    padding: 6px 24px 22px;
+}
+.btn-cancel {
+    padding: 11px 18px; border: 1px solid #e6e9ee; background: #fff;
+    border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+    color: #5b6b7b; cursor: pointer;
+}
+.btn-cancel:hover { background: #f4f6fa; }
+.btn-submit {
+    padding: 11px 22px; border: none; background: var(--salim-income);
+    color: #fff; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+    cursor: pointer;
+}
+.btn-submit:hover { background: #255a43; }

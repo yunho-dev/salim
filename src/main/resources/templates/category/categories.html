@@ -5,280 +5,12 @@
 
 <head>
   <title>카테고리 관리</title>
-
-  <th:block layout:fragment="page-css">
-    <style>
-      .card {
-        border: 1px solid #e6e9ee;
-        border-radius: 10px;
-        box-shadow: none;
-      }
-
-      .page-pretitle {
-        color: #8a97a5;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-      }
-
-      .page-title {
-        font-size: 1.4375rem;
-        font-weight: 800;
-        color: var(--salim-balance);
-        letter-spacing: -0.01em;
-      }
-
-      /* ===== 추가 버튼 ===== */
-      .btn-add {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--salim-income);
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 11px 18px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      .btn-add:hover { background: #255a43; color: #fff; }
-
-      /* ===== 탭 ===== */
-      .cat-tabs {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        border-bottom: 1px solid #e6e9ee;
-      }
-      .cat-tab {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: transparent;
-        border: none;
-        border-bottom: 2px solid transparent;
-        padding: 11px 16px 13px;
-        margin-bottom: -1px;
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: #8a97a5;
-        cursor: pointer;
-      }
-      /* 활성 탭: 유형별 색상 (지출=테라코타 / 수입=그린) */
-      .cat-tab.active[data-type="expense"] {
-        color: var(--salim-expense);
-        border-bottom-color: var(--salim-expense);
-      }
-      .cat-tab.active[data-type="income"] {
-        color: var(--salim-income);
-        border-bottom-color: var(--salim-income);
-      }
-      .cat-tab-count {
-        font-size: 0.72rem;
-        font-weight: 700;
-        padding: 1px 8px;
-        border-radius: 20px;
-        background: #eef1f4;
-        color: #8a97a5;
-      }
-      .cat-tab.active[data-type="expense"] .cat-tab-count {
-        background: rgba(193, 96, 74, 0.12);
-        color: var(--salim-expense);
-      }
-      .cat-tab.active[data-type="income"] .cat-tab-count {
-        background: rgba(45, 106, 79, 0.12);
-        color: var(--salim-income);
-      }
-
-      /* ===== 카테고리 그리드 ===== */
-      .cat-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 18px;
-      }
-      .cat-card {
-        background: #fff;
-        border: 1px solid #e6e9ee;
-        border-radius: 12px;
-        padding: 18px 20px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        transition: border-color 0.15s, box-shadow 0.15s;
-      }
-      .cat-card:hover {
-        border-color: #d4dae1;
-        box-shadow: 0 3px 10px rgba(30, 45, 61, 0.05);
-      }
-      .cat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 13px;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .cat-icon.expense { background: rgba(193, 96, 74, 0.12); color: var(--salim-expense); }
-      .cat-icon.income  { background: rgba(45, 106, 79, 0.12); color: var(--salim-income); }
-
-      .cat-name { font-size: 0.9375rem; font-weight: 700; color: var(--salim-balance); }
-      .cat-count { font-size: 0.75rem; color: #8a97a5; font-weight: 600; margin-top: 3px; }
-
-      .cat-action {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #e6e9ee;
-        background: #fff;
-        border-radius: 8px;
-        color: #5b6b7b;
-        cursor: pointer;
-      }
-      .cat-action:hover { background: #f4f6fa; color: var(--salim-balance); }
-      .cat-action.delete:hover {
-        background: rgba(193, 96, 74, 0.08);
-        color: var(--salim-expense);
-        border-color: rgba(193, 96, 74, 0.3);
-      }
-
-      /* ===== 빈 상태 ===== */
-      .cat-empty {
-        background: #fff;
-        border: 1px solid #e6e9ee;
-        border-radius: 12px;
-        padding: 72px 24px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-      .cat-empty-icon {
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-        background: #F4F6FA;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 22px;
-        color: #b3bdc8;
-      }
-      .cat-empty-title { font-size: 1.0625rem; font-weight: 800; color: var(--salim-balance); margin-bottom: 7px; }
-      .cat-empty-desc { font-size: 0.85rem; color: #8a97a5; max-width: 340px; line-height: 1.55; margin-bottom: 24px; }
-
-      /* ===== 모달 ===== */
-      .salim-modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(30, 45, 61, 0.45);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1050;
-        padding: 24px;
-      }
-      .salim-modal {
-        background: #fff;
-        border-radius: 16px;
-        width: 480px;
-        max-width: 100%;
-        box-shadow: 0 24px 60px rgba(30, 45, 61, 0.3);
-        overflow: hidden;
-      }
-      .salim-modal-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 22px 24px 18px;
-        border-bottom: 1px solid #f0f2f5;
-      }
-      .salim-modal-header h2 { font-size: 1.0625rem; font-weight: 800; color: var(--salim-balance); margin: 0; }
-      .modal-close {
-        width: 32px; height: 32px;
-        display: flex; align-items: center; justify-content: center;
-        border: none; background: transparent; border-radius: 8px;
-        color: #8a97a5; cursor: pointer;
-      }
-      .modal-close:hover { background: #f4f6fa; color: var(--salim-balance); }
-
-      .salim-modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 22px; }
-      .form-label-sm { display: block; font-size: 0.78rem; font-weight: 700; color: #5b6b7b; margin-bottom: 9px; }
-
-      /* 유형 토글 - 시안 색상 반영 (지출=테라코타 / 수입=그린) */
-      .type-toggle { display: flex; background: #F4F6FA; border-radius: 9px; padding: 4px; }
-      .type-toggle button {
-        flex: 1; padding: 9px; border: none; border-radius: 7px;
-        font-size: 0.85rem; font-weight: 700; cursor: pointer;
-        background: transparent; color: #8a97a5;
-        transition: background 0.15s, color 0.15s;
-      }
-      .type-toggle button.active[data-type="expense"] {
-        background: var(--salim-expense); color: #fff;
-        box-shadow: 0 1px 3px rgba(193, 96, 74, 0.3);
-      }
-      .type-toggle button.active[data-type="income"] {
-        background: var(--salim-income); color: #fff;
-        box-shadow: 0 1px 3px rgba(45, 106, 79, 0.3);
-      }
-
-      .salim-input {
-        width: 100%; padding: 11px 13px;
-        border: 1px solid #e6e9ee; border-radius: 9px;
-        font-size: 0.875rem; color: var(--salim-balance);
-        outline: none; background: #fff;
-      }
-      .salim-input:focus {
-        border-color: var(--salim-income);
-        box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
-      }
-
-      /* 아이콘 피커 */
-      .icon-picker { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-      .icon-picker button {
-        aspect-ratio: 1;
-        display: flex; align-items: center; justify-content: center;
-        border: 1px solid #e6e9ee; background: #fff; border-radius: 9px;
-        color: #5b6b7b; cursor: pointer;
-      }
-      .icon-picker button:hover { background: #f4f6fa; }
-      .icon-picker button.active {
-        border-color: var(--salim-income);
-        background: rgba(45, 106, 79, 0.08);
-        color: var(--salim-income);
-      }
-
-      /* 색상 피커 */
-      .color-picker { display: flex; gap: 10px; }
-      .color-picker button {
-        width: 32px; height: 32px; border-radius: 50%;
-        border: 2px solid transparent; cursor: pointer;
-      }
-      .color-picker button.active { border-color: var(--salim-balance); }
-
-      .salim-modal-footer {
-        display: flex; justify-content: flex-end; gap: 10px;
-        padding: 6px 24px 22px;
-      }
-      .btn-cancel {
-        padding: 11px 18px; border: 1px solid #e6e9ee; background: #fff;
-        border-radius: 8px; font-size: 0.85rem; font-weight: 700;
-        color: #5b6b7b; cursor: pointer;
-      }
-      .btn-cancel:hover { background: #f4f6fa; }
-      .btn-submit {
-        padding: 11px 22px; border: none; background: var(--salim-income);
-        color: #fff; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
-        cursor: pointer;
-      }
-      .btn-submit:hover { background: #255a43; }
-    </style>
-  </th:block>
 </head>
 
-<body>
+<th:block layout:fragment="page-css">
+  <link th:href="@{/css/category/categories.css}" rel="stylesheet"/>
+</th:block>
+
 <section layout:fragment="content">
 
   <!-- 페이지 헤더 -->
@@ -289,7 +21,7 @@
           <div class="page-pretitle">카테고리</div>
           <h1 class="page-title mt-1">카테고리 관리</h1>
         </div>
-        <button type="button" class="btn-add" onclick="openCategoryModal()">
+        <button type="button" class="btn-add" id="btnOpenModal">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 5v14M5 12h14"/>
@@ -303,226 +35,61 @@
   <div class="page-body">
     <div class="container-fluid">
 
-      <!-- 탭: 지출 / 수입 (JS 토글) -->
+      <!-- 탭: 지출 / 수입 -->
       <div class="cat-tabs mb-4">
-        <button type="button" class="cat-tab active" data-type="expense" onclick="switchTab('expense')">
+        <button type="button" class="cat-tab active" data-type="expense">
           지출 카테고리
-          <!-- TODO: th:text="${expenseCount}" -->
-          <span class="cat-tab-count">7</span>
+          <span class="cat-tab-count">0</span>
         </button>
-        <button type="button" class="cat-tab" data-type="income" onclick="switchTab('income')">
+        <button type="button" class="cat-tab" data-type="income">
           수입 카테고리
-          <!-- TODO: th:text="${incomeCount}" -->
-          <span class="cat-tab-count">3</span>
+          <span class="cat-tab-count">0</span>
         </button>
       </div>
 
-      <!-- ===== 지출 카테고리 그리드 ===== -->
-      <div class="cat-grid" id="grid-expense">
-        <!-- TODO: th:each="cat : ${expenseCategories}" 로 반복 -->
-
-        <div class="cat-card">
-            <span class="cat-icon expense">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 2v7c0 1.1.9 2 2 2s2-.9 2-2V2M5 2v20M21 15V2a5 5 0 0 0-3 4.5V11c0 1 .5 2 1.5 2.5L21 15v6"/>
-              </svg>
-            </span>
-          <div class="flex-fill">
-            <div class="cat-name">식비</div>
-            <div class="cat-count">거래 42건</div>
+      <!-- ===== 지출 카테고리 패널 ===== -->
+      <div id="panel-expense">
+        <!-- 카드는 category.js에서 GET /api/categories 응답으로 렌더링 -->
+        <div class="cat-grid d-none" id="grid-expense"></div>
+        <div class="cat-empty d-none" id="empty-expense">
+          <div class="cat-empty-icon">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><path d="M17 14v6M14 17h6"/>
+            </svg>
           </div>
-          <div class="d-flex align-items-center gap-1">
-            <button type="button" class="cat-action" title="편집">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
-              </svg>
-            </button>
-            <button type="button" class="cat-action delete" title="삭제">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-              </svg>
-            </button>
-          </div>
+          <div class="cat-empty-title">카테고리를 추가해보세요</div>
+          <div class="cat-empty-desc">카테고리를 만들면 거래를 분류하고 지출 패턴을<br>한눈에 볼 수 있어요.</div>
+          <button type="button" class="btn-add js-open-modal">+ 카테고리 추가</button>
         </div>
-
-        <div class="cat-card">
-            <span class="cat-icon expense">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M2 12h19.6"/>
-              </svg>
-            </span>
-          <div class="flex-fill">
-            <div class="cat-name">교통</div>
-            <div class="cat-count">거래 18건</div>
-          </div>
-          <div class="d-flex align-items-center gap-1">
-            <button type="button" class="cat-action" title="편집">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
-              </svg>
-            </button>
-            <button type="button" class="cat-action delete" title="삭제">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="cat-card">
-            <span class="cat-icon expense">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>
-              </svg>
-            </span>
-          <div class="flex-fill">
-            <div class="cat-name">주거</div>
-            <div class="cat-count">거래 8건</div>
-          </div>
-          <div class="d-flex align-items-center gap-1">
-            <button type="button" class="cat-action" title="편집">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
-              </svg>
-            </button>
-            <button type="button" class="cat-action delete" title="삭제">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-      </div><!-- /grid-expense -->
-
-      <!-- ===== 수입 카테고리 그리드 (기본 숨김) ===== -->
-      <div class="cat-grid d-none" id="grid-income">
-        <!-- TODO: th:each="cat : ${incomeCategories}" 로 반복 -->
-
-        <div class="cat-card">
-            <span class="cat-icon income">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/>
-              </svg>
-            </span>
-          <div class="flex-fill">
-            <div class="cat-name">급여</div>
-            <div class="cat-count">거래 6건</div>
-          </div>
-          <div class="d-flex align-items-center gap-1">
-            <button type="button" class="cat-action" title="편집">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
-              </svg>
-            </button>
-            <button type="button" class="cat-action delete" title="삭제">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="cat-card">
-            <span class="cat-icon income">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-              </svg>
-            </span>
-          <div class="flex-fill">
-            <div class="cat-name">부업</div>
-            <div class="cat-count">거래 3건</div>
-          </div>
-          <div class="d-flex align-items-center gap-1">
-            <button type="button" class="cat-action" title="편집">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
-              </svg>
-            </button>
-            <button type="button" class="cat-action delete" title="삭제">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="cat-card">
-            <span class="cat-icon income">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/>
-              </svg>
-            </span>
-          <div class="flex-fill">
-            <div class="cat-name">이자</div>
-            <div class="cat-count">거래 2건</div>
-          </div>
-          <div class="d-flex align-items-center gap-1">
-            <button type="button" class="cat-action" title="편집">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
-              </svg>
-            </button>
-            <button type="button" class="cat-action delete" title="삭제">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-      </div><!-- /grid-income -->
-
-      <!--
-        빈 상태 (카테고리 없을 때).
-        TODO: th:if 로 해당 그리드와 분기. 현재 참고용 주석.
-      <div class="cat-empty">
-        <div class="cat-empty-icon">
-          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><path d="M17 14v6M14 17h6"/>
-          </svg>
-        </div>
-        <div class="cat-empty-title">카테고리를 추가해보세요</div>
-        <div class="cat-empty-desc">카테고리를 만들면 거래를 분류하고 지출 패턴을 한눈에 볼 수 있어요.</div>
-        <button type="button" class="btn-add" onclick="openCategoryModal()">+ 카테고리 추가</button>
       </div>
-      -->
+
+      <!-- ===== 수입 카테고리 패널 (기본 숨김) ===== -->
+      <div id="panel-income" class="d-none">
+        <div class="cat-grid d-none" id="grid-income"></div>
+        <div class="cat-empty d-none" id="empty-income">
+          <div class="cat-empty-icon">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><path d="M17 14v6M14 17h6"/>
+            </svg>
+          </div>
+          <div class="cat-empty-title">카테고리를 추가해보세요</div>
+          <div class="cat-empty-desc">카테고리를 만들면 수입을 분류하고 흐름을 한눈에 볼 수 있어요.</div>
+          <button type="button" class="btn-add js-open-modal">+ 카테고리 추가</button>
+        </div>
+      </div>
 
     </div>
   </div>
 
   <!-- ===== 카테고리 추가/편집 모달 ===== -->
-  <div id="categoryModal" class="salim-modal-overlay d-none" onclick="closeCategoryModal(event)">
-    <div class="salim-modal" onclick="event.stopPropagation()">
+  <div id="categoryModal" class="salim-modal-overlay d-none">
+    <div class="salim-modal">
 
       <div class="salim-modal-header">
         <h2>카테고리 추가</h2>
-        <button type="button" class="modal-close" onclick="closeCategoryModal()">
+        <button type="button" class="modal-close">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18M6 6l12 12"/>
@@ -530,69 +97,52 @@
         </button>
       </div>
 
-      <!-- TODO: fetch로 /api/categories 제출 -->
       <div class="salim-modal-body">
 
         <!-- 유형 토글 -->
         <div>
           <label class="form-label-sm">유형</label>
           <div class="type-toggle" id="typeToggle">
-            <button type="button" class="active" data-type="expense" onclick="selectType(this)">지출</button>
-            <button type="button" data-type="income" onclick="selectType(this)">수입</button>
+            <button type="button" class="active" data-type="expense">지출</button>
+            <button type="button" data-type="income">수입</button>
           </div>
         </div>
 
         <!-- 이름 입력 -->
         <div>
           <label class="form-label-sm">카테고리 이름</label>
-          <input type="text" class="salim-input" placeholder="예: 식비, 교통, 문화">
+          <input type="text" id="categoryName" class="salim-input" placeholder="예: 식비, 교통, 문화">
+          <span id="nameError" class="d-none"
+                style="font-size:0.75rem;color:var(--salim-expense);margin-top:5px;display:block;">
+            카테고리 이름을 입력해주세요.
+          </span>
         </div>
 
-        <!-- 아이콘 피커 -->
+        <!-- 아이콘 피커: 색상은 선택된 유형(지출/수입)을 따라감 -->
         <div>
           <label class="form-label-sm">아이콘</label>
-          <div class="icon-picker" id="iconPicker">
-            <button type="button" class="active" onclick="selectIcon(this)">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2s2-.9 2-2V2M5 2v20M21 15V2a5 5 0 0 0-3 4.5V11c0 1 .5 2 1.5 2.5L21 15v6"/></svg>
-            </button>
-            <button type="button" onclick="selectIcon(this)">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M2 12h19.6"/></svg>
-            </button>
-            <button type="button" onclick="selectIcon(this)">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
-            </button>
-            <button type="button" onclick="selectIcon(this)">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v1H5a3 3 0 0 0 0 6h4v4a3 3 0 0 0 6 0v-4h4a3 3 0 0 0 0-6h-4V5a3 3 0 0 0-3-3z"/></svg>
-            </button>
-            <button type="button" onclick="selectIcon(this)">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-            </button>
-            <button type="button" onclick="selectIcon(this)">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-            </button>
-            <button type="button" onclick="selectIcon(this)">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- 색상 피커 -->
-        <div>
-          <label class="form-label-sm">색상</label>
-          <div class="color-picker" id="colorPicker">
-            <button type="button" class="active" style="background:#C1604A;" onclick="selectColor(this)"></button>
-            <button type="button" style="background:#2D6A4F;" onclick="selectColor(this)"></button>
-            <button type="button" style="background:#1E2D3D;" onclick="selectColor(this)"></button>
-            <button type="button" style="background:#D4846F;" onclick="selectColor(this)"></button>
-            <button type="button" style="background:#5b8a72;" onclick="selectColor(this)"></button>
+          <!-- title(툴팁)은 category.js의 CATEGORY_ICONS에서 동적으로 채움 -->
+          <div class="icon-picker" id="iconPicker" data-type="expense">
+            <button type="button" class="active" data-icon="food"></button>
+            <button type="button" data-icon="transport"></button>
+            <button type="button" data-icon="housing"></button>
+            <button type="button" data-icon="culture"></button>
+            <button type="button" data-icon="shopping"></button>
+            <button type="button" data-icon="subscription"></button>
+            <button type="button" data-icon="salary"></button>
+            <button type="button" data-icon="side"></button>
+            <button type="button" data-icon="interest"></button>
+            <button type="button" data-icon="etc"></button>
           </div>
         </div>
 
       </div>
 
       <div class="salim-modal-footer">
-        <button type="button" class="btn-cancel" onclick="closeCategoryModal()">취소</button>
-        <button type="button" class="btn-submit">추가하기</button>
+        <span id="submitError" class="d-none"
+              style="font-size:0.78rem;color:var(--salim-expense);margin-right:auto;align-self:center;"></span>
+        <button type="button" class="btn-cancel">취소</button>
+        <button type="button" class="btn-submit" id="submitCategoryBtn">추가하기</button>
       </div>
 
     </div>
@@ -600,43 +150,7 @@
 </section>
 
 <th:block layout:fragment="page-js">
-  <script>
-    // 탭 전환 (디스플레이 토글)
-    function switchTab(type) {
-      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector('.cat-tab[data-type="' + type + '"]').classList.add('active');
-
-      document.getElementById('grid-expense').classList.toggle('d-none', type !== 'expense');
-      document.getElementById('grid-income').classList.toggle('d-none', type !== 'income');
-    }
-
-    // 모달
-    function openCategoryModal() {
-      document.getElementById('categoryModal').classList.remove('d-none');
-    }
-    function closeCategoryModal(e) {
-      document.getElementById('categoryModal').classList.add('d-none');
-    }
-
-    // 유형 토글
-    function selectType(btn) {
-      document.querySelectorAll('#typeToggle button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    // 아이콘 선택
-    function selectIcon(btn) {
-      document.querySelectorAll('#iconPicker button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    // 색상 선택
-    function selectColor(btn) {
-      document.querySelectorAll('#colorPicker button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-  </script>
+  <script th:src="@{/js/category/categories.js}"></script>
 </th:block>
 
-</body>
 </html>
