@@ -1,7 +1,10 @@
 package com.salim.member.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,25 +24,33 @@ public class Member {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
 
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(name = "insert_date", nullable = false, updatable = false)
     private LocalDateTime insertDate;
 
     @UpdateTimestamp
-    @Column(insertable = false)
+    @Column(name = "update_date", nullable = false)
     private LocalDateTime updateDate;
 
     @Builder
-    private Member(String memberId, String password, String email, String name) {
+    public Member(String memberId, String password, String email, String name) {
         this.memberId = memberId;
         this.password = password;
         this.email = email;
         this.name = name;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 }
