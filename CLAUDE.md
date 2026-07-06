@@ -134,6 +134,8 @@ public record SignupRequest(
 | 페이지 컨트롤러 | `@Controller` | HTML view | 화면 렌더링 (Thymeleaf) |
 | API 컨트롤러 | `@RestController` 또는 `@Controller`+`@ResponseBody` | JSON | 데이터 처리, 비동기 액션 |
 
+- **클래스 네이밍:** 뷰 렌더링 컨트롤러는 `XxxViewController`, API 컨트롤러는 `XxxApiController`로 역할을 이름에 명시 (예: `CategoryViewController`, `CategoryApiController`). 한 도메인에 두 역할이 공존하면 이렇게 클래스를 분리한다.
+  - 예외: `AuthController`(로그인 페이지 렌더링 + 로그인/로그아웃 폼 처리)처럼 페이지 전환이 있는 폼 액션과 뷰 렌더링이 강하게 얽혀 있고 도메인 CRUD 성격이 아닌 경우는 분리하지 않고 유지.
 - URL 네이밍: kebab-case 복수형 (예: `/payment-methods`, `/transactions`)
 - `@Transactional`은 서비스 쓰기 메서드에 명시적으로 선언
 
