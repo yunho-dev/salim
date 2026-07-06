@@ -20,18 +20,18 @@ body {
     max-width: 600px; /* 기본값보다 넉넉하게, 취향껏 480~600px 사이 조절 */
 }
 
-.salim-auth-card {
-    border-top: 3px solid var(--salim-green);
+.sallim-auth-card {
+    border-top: 3px solid var(--sallim-green);
 }
 
-.salim-logo-box {
+.sallim-logo-box {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 56px;
     height: 56px;
     border-radius: 14px;
-    background-color: var(--salim-green);
+    background-color: var(--sallim-green);
     color: #fff;
     font-size: 1.5rem;
     font-weight: 700;
@@ -44,7 +44,7 @@ body {
 
 /* 포커스 시 input-group 전체에 딥그린 테두리 */
 .input-group-flat:focus-within {
-    border-color: var(--salim-green);
-    box-shadow: 0 0 0 1px var(--salim-green);
+    border-color: var(--sallim-green);
+    box-shadow: 0 0 0 1px var(--sallim-green);
     border-radius: var(--tblr-border-radius);
 }

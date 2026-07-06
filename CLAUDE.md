@@ -1,4 +1,4 @@
-# 살림(Salim) 프로젝트
+# 살림(Sallim) 프로젝트
 
 한국 가계부 웹 애플리케이션. 이직용 포트폴리오이며, 백엔드 설계 역량과 JPA 데이터 모델링 능력을 보여주는 게 핵심 목적. 모든 기술적 결정은 면접에서 근거를 설명할 수 있어야 함 — "그냥 되니까"가 아니라 "왜 이렇게 했는지"가 중요.
 
@@ -10,7 +10,7 @@
 ./gradlew bootRun                              # 로컬 서버 실행 (application-local.yml 프로필 사용)
 ./gradlew build                                # 전체 빌드 (테스트 포함)
 ./gradlew test                                 # 전체 테스트 실행
-./gradlew test --tests "SalimApplicationTests" # 단일 테스트 클래스 실행
+./gradlew test --tests "SallimApplicationTests" # 단일 테스트 클래스 실행
 ```
 
 - PostgreSQL이 로컬에서 떠 있어야 함 (`application-local.yml`의 `jdbc:postgresql://localhost:5432/salim_db`, 스키마 `salim`, 계정 `salim`).
@@ -52,7 +52,7 @@ MEMBER, BANK, ACCOUNT, CATEGORY, PAYMENT_METHOD, TRANSACTION
 ## 패키지 구조 원칙
 
 ```
-com.salim.[domain]
+com.sallim.[domain]
 ```
 도메인별로 패키지를 나누고, 도메인에 속하지 않는 공통 인프라(JWT, Security, 유틸)는 `global` 하위에 배치.
 
@@ -77,7 +77,7 @@ global/
 - **완성:** `member` (회원가입/로그인, JWT 발급·검증, `MemberRepository`/`AuthService`/`MemberService`)
 - **스캐폴딩만 존재 (화면 라우팅용 `@Controller`만 있고 repository/dto/service는 빈 패키지):** `account`, `category`, `dashboard`, `payment`, `transaction` — 각 컨트롤러는 정적 페이지 뷰 이름만 반환하는 상태이며 실제 CRUD/비즈니스 로직은 미구현
 - `global/util`(AesUtil, AccountNumberConverter)은 위 컨벤션 문서화만 되어 있고 아직 코드 없음 — 계좌 암호화 작업 시작 시 신규 작성
-- `src/test/java/org/example/salim/SalimApplicationTests.java`는 Spring Initializr가 생성한 기본 패키지(`org.example.salim`)에 남아 있음. 나머지 코드는 전부 `com.salim` 하위이므로 새 테스트를 추가할 때 패키지 위치에 주의 (관례상 `com.salim` 하위에 작성할 것)
+- `src/test/java/org/example/sallim/SallimApplicationTests.java`는 Spring Initializr가 생성한 기본 패키지(`org.example.sallim`)에 남아 있음. 나머지 코드는 전부 `com.sallim` 하위이므로 새 테스트를 추가할 때 패키지 위치에 주의 (관례상 `com.sallim` 하위에 작성할 것)
 
 ---
 

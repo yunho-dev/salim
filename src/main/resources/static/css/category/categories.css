@@ -13,7 +13,7 @@
 .page-title {
     font-size: 1.4375rem;
     font-weight: 800;
-    color: var(--salim-balance);
+    color: var(--sallim-balance);
     letter-spacing: -0.01em;
 }
 
@@ -22,7 +22,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--salim-income);
+    background: var(--sallim-income);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -56,12 +56,12 @@
 }
 /* 활성 탭: 유형별 색상 (지출=테라코타 / 수입=그린) */
 .cat-tab.active[data-type="expense"] {
-    color: var(--salim-expense);
-    border-bottom-color: var(--salim-expense);
+    color: var(--sallim-expense);
+    border-bottom-color: var(--sallim-expense);
 }
 .cat-tab.active[data-type="income"] {
-    color: var(--salim-income);
-    border-bottom-color: var(--salim-income);
+    color: var(--sallim-income);
+    border-bottom-color: var(--sallim-income);
 }
 .cat-tab-count {
     font-size: 0.72rem;
@@ -73,11 +73,11 @@
 }
 .cat-tab.active[data-type="expense"] .cat-tab-count {
     background: rgba(193, 96, 74, 0.12);
-    color: var(--salim-expense);
+    color: var(--sallim-expense);
 }
 .cat-tab.active[data-type="income"] .cat-tab-count {
     background: rgba(45, 106, 79, 0.12);
-    color: var(--salim-income);
+    color: var(--sallim-income);
 }
 
 /* ===== 카테고리 그리드 ===== */
@@ -109,11 +109,11 @@
     align-items: center;
     justify-content: center;
 }
-.cat-icon.expense { background: rgba(193, 96, 74, 0.12); color: var(--salim-expense); }
-.cat-icon.income  { background: rgba(45, 106, 79, 0.12); color: var(--salim-income); }
+.cat-icon.expense { background: rgba(193, 96, 74, 0.12); color: var(--sallim-expense); }
+.cat-icon.income  { background: rgba(45, 106, 79, 0.12); color: var(--sallim-income); }
 .cat-icon svg { width: 22px; height: 22px; }
 
-.cat-name { font-size: 0.9375rem; font-weight: 700; color: var(--salim-balance); }
+.cat-name { font-size: 0.9375rem; font-weight: 700; color: var(--sallim-balance); }
 .cat-count { font-size: 0.75rem; color: #8a97a5; font-weight: 600; margin-top: 3px; }
 
 .cat-action {
@@ -128,10 +128,10 @@
     color: #5b6b7b;
     cursor: pointer;
 }
-.cat-action:hover { background: #f4f6fa; color: var(--salim-balance); }
+.cat-action:hover { background: #f4f6fa; color: var(--sallim-balance); }
 .cat-action.delete:hover {
     background: rgba(193, 96, 74, 0.08);
-    color: var(--salim-expense);
+    color: var(--sallim-expense);
     border-color: rgba(193, 96, 74, 0.3);
 }
 
@@ -157,11 +157,11 @@
     margin-bottom: 22px;
     color: #b3bdc8;
 }
-.cat-empty-title { font-size: 1.0625rem; font-weight: 800; color: var(--salim-balance); margin-bottom: 7px; }
+.cat-empty-title { font-size: 1.0625rem; font-weight: 800; color: var(--sallim-balance); margin-bottom: 7px; }
 .cat-empty-desc { font-size: 0.85rem; color: #8a97a5; max-width: 340px; line-height: 1.55; margin-bottom: 24px; }
 
 /* ===== 모달 ===== */
-.salim-modal-overlay {
+.sallim-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(30, 45, 61, 0.45);
@@ -171,7 +171,7 @@
     z-index: 1050;
     padding: 24px;
 }
-.salim-modal {
+.sallim-modal {
     background: #fff;
     border-radius: 16px;
     width: 480px;
@@ -179,23 +179,23 @@
     box-shadow: 0 24px 60px rgba(30, 45, 61, 0.3);
     overflow: hidden;
 }
-.salim-modal-header {
+.sallim-modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 22px 24px 18px;
     border-bottom: 1px solid #f0f2f5;
 }
-.salim-modal-header h2 { font-size: 1.0625rem; font-weight: 800; color: var(--salim-balance); margin: 0; }
+.sallim-modal-header h2 { font-size: 1.0625rem; font-weight: 800; color: var(--sallim-balance); margin: 0; }
 .modal-close {
     width: 32px; height: 32px;
     display: flex; align-items: center; justify-content: center;
     border: none; background: transparent; border-radius: 8px;
     color: #8a97a5; cursor: pointer;
 }
-.modal-close:hover { background: #f4f6fa; color: var(--salim-balance); }
+.modal-close:hover { background: #f4f6fa; color: var(--sallim-balance); }
 
-.salim-modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 22px; }
+.sallim-modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 22px; }
 .form-label-sm { display: block; font-size: 0.78rem; font-weight: 700; color: #5b6b7b; margin-bottom: 9px; }
 
 /* 유형 토글 - 시안 색상 반영 (지출=테라코타 / 수입=그린) */
@@ -207,22 +207,22 @@
     transition: background 0.15s, color 0.15s;
 }
 .type-toggle button.active[data-type="expense"] {
-    background: var(--salim-expense); color: #fff;
+    background: var(--sallim-expense); color: #fff;
     box-shadow: 0 1px 3px rgba(193, 96, 74, 0.3);
 }
 .type-toggle button.active[data-type="income"] {
-    background: var(--salim-income); color: #fff;
+    background: var(--sallim-income); color: #fff;
     box-shadow: 0 1px 3px rgba(45, 106, 79, 0.3);
 }
 
-.salim-input {
+.sallim-input {
     width: 100%; padding: 11px 13px;
     border: 1px solid #e6e9ee; border-radius: 9px;
-    font-size: 0.875rem; color: var(--salim-balance);
+    font-size: 0.875rem; color: var(--sallim-balance);
     outline: none; background: #fff;
 }
-.salim-input:focus {
-    border-color: var(--salim-income);
+.sallim-input:focus {
+    border-color: var(--sallim-income);
     box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
 }
 
@@ -237,18 +237,18 @@
 .icon-picker button:hover { background: #f4f6fa; }
 /* 활성 아이콘 색상: 선택된 유형(지출/수입)을 따라감 */
 .icon-picker[data-type="expense"] button.active {
-    border-color: var(--salim-expense);
+    border-color: var(--sallim-expense);
     background: rgba(193, 96, 74, 0.08);
-    color: var(--salim-expense);
+    color: var(--sallim-expense);
 }
 .icon-picker[data-type="income"] button.active {
-    border-color: var(--salim-income);
+    border-color: var(--sallim-income);
     background: rgba(45, 106, 79, 0.08);
-    color: var(--salim-income);
+    color: var(--sallim-income);
 }
 .icon-picker button svg { width: 19px; height: 19px; }
 
-.salim-modal-footer {
+.sallim-modal-footer {
     display: flex; justify-content: flex-end; gap: 10px;
     padding: 6px 24px 22px;
 }
@@ -259,7 +259,7 @@
 }
 .btn-cancel:hover { background: #f4f6fa; }
 .btn-submit {
-    padding: 11px 22px; border: none; background: var(--salim-income);
+    padding: 11px 22px; border: none; background: var(--sallim-income);
     color: #fff; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
     cursor: pointer;
 }

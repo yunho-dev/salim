@@ -1,9 +1,9 @@
 :root {
-    --salim-income: #2D6A4F;
-    --salim-expense: #C1604A;
-    --salim-balance: #1E2D3D;
-    --salim-sidebar-bg: #1E2D3D;
-    --salim-sidebar-active: #2D6A4F;
+    --sallim-income: #2D6A4F;
+    --sallim-expense: #C1604A;
+    --sallim-balance: #1E2D3D;
+    --sallim-sidebar-bg: #1E2D3D;
+    --sallim-sidebar-active: #2D6A4F;
 }
 
 html {
@@ -40,7 +40,7 @@ section {
    width에 !important 필요: Tabler 자체 규칙(.navbar-vertical.navbar-expand-lg{width:15rem})이
    클래스 2개(0,2,0)라 우리 쪽(.navbar-vertical, 0,1,0)보다 specificity가 높아 덮어씀 */
 .navbar-vertical {
-    background-color: var(--salim-sidebar-bg) !important;
+    background-color: var(--sallim-sidebar-bg) !important;
     border-right: none !important;
     width: 248px !important; /* 살짝 넓게 (기본 15rem=240px → 248px) */
 }
@@ -104,7 +104,7 @@ section {
 
 .navbar-vertical .nav-link.active {
     color: #ffffff !important;
-    background-color: var(--salim-sidebar-active) !important;
+    background-color: var(--sallim-sidebar-active) !important;
 }
 
 /* 아이콘 18px 고정, 항상 표시 */
@@ -222,28 +222,28 @@ section {
 
 /* ===== 수입/지출 유틸리티 ===== */
 .text-income {
-    color: var(--salim-income) !important;
+    color: var(--sallim-income) !important;
 }
 
 .text-expense {
-    color: var(--salim-expense) !important;
+    color: var(--sallim-expense) !important;
 }
 
 .text-balance {
-    color: var(--salim-balance) !important;
+    color: var(--sallim-balance) !important;
 }
 
 .badge-income {
     background-color: rgba(45, 106, 79, 0.12);
-    color: var(--salim-income);
+    color: var(--sallim-income);
 }
 
 .badge-expense {
     background-color: rgba(193, 96, 74, 0.12);
-    color: var(--salim-expense);
+    color: var(--sallim-expense);
 }
 
 .badge-balance {
     background-color: rgba(30, 45, 61, 0.10);
-    color: var(--salim-balance);
+    color: var(--sallim-balance);
 }

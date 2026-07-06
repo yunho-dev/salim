@@ -12,12 +12,12 @@
   <!-- 태그라인 -->
   <p class="text-center fw-bold text-dark mb-4">매일의 살림을 한눈에 정리해요</p>
 
-  <div class="card card-md salim-auth-card">
+  <div class="card card-md sallim-auth-card">
     <div class="card-body p-4 p-md-5">
 
       <!-- 살 아이콘 -->
       <div class="text-center mb-3">
-        <img th:src="@{/images/logo/salrim-symbol-light.svg}" alt="살림" class="auth-symbol">
+        <img th:src="@{/images/logo/sallim-symbol-light.svg}" alt="살림" class="auth-symbol">
       </div>
 
       <h2 class="text-center mb-1">회원가입</h2>
@@ -113,7 +113,7 @@
     function showMsg(id, message, isValid) {
       const el = document.getElementById(id);
       el.textContent = message;
-      el.style.color = isValid ? 'var(--salim-income)' : 'var(--tblr-danger)'; // 딥그린 or 빨강
+      el.style.color = isValid ? 'var(--sallim-income)' : 'var(--tblr-danger)'; // 딥그린 or 빨강
     }
 
     // 아이디: 정규식 → 통과하면 중복 체크
