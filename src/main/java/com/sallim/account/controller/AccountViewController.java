@@ -2,14 +2,12 @@ package com.sallim.account.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/accounts")
-class AccountController {
+class AccountViewController {
 
-    @GetMapping("")
-    public String categoryPage() {
+    @GetMapping("/categories")
+    public String accountPage() {
         return "account/accounts";
     }
 

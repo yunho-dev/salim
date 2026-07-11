@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 class PaymentMethodViewController {
 
     @GetMapping("/payment-methods")
-    public String dashboardPage() {
+    public String paymentMethodPage() {
         return "payment/payment-methods";
     }
 

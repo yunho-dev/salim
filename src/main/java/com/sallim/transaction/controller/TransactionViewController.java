@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 class TransactionViewController {
 
     @GetMapping("/transactions")
-    public String dashboardPage() {
+    public String transactionPage() {
         return "transaction/transactions";
     }
 
